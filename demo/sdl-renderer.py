@@ -9,10 +9,12 @@ from punyty.scene import Scene
 
 
 if __name__ == '__main__':
-    scene = Scene()
+    width = height =800
+
+    scene = Scene(f=2000, cx=width/2, cy=height/2)
     cube = Cube()
     scene.add_object(cube)
-    renderer = SDLRenderer(width=800, height=800)
+    renderer = SDLRenderer(width=width, height=height)
 
     while True:
         t = time.time()

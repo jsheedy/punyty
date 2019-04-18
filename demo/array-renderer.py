@@ -1,5 +1,6 @@
 import time
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -18,7 +19,10 @@ if __name__ == '__main__':
     scene.add_object(cube)
     renderer = ArrayRenderer(target_array)
 
-    cube.rotate(Vector3(time.time()/50, time.time()/70, time.time()/100))
-    renderer.render(scene)
+    plt.show()
+    matplotlib.interactive(False)
 
-    plt.imshow(target_array)
+    for i in range(2):
+        plt.imshow(target_array)
+        plt.show()
+        time.sleep(0.1)

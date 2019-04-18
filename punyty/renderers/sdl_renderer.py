@@ -59,18 +59,8 @@ class SDLRenderer(Renderer):
         for color, p1, p2 in lines:
             sdlgfx.aalineColor(self.context.sdlrenderer, p1[0], p1[1], p2[0], p2[1], color)
 
-    def draw_hud(self, hud):
-        surface = self.surface
-        pixels = sdl2.ext.pixels2d(surface)
-        color = int(127*(math.sin(self.frame)+1)) << 16
-        h, w = pixels.shape
-        pixels[0:10, :] = color
-        pixels[h-10:h, :] = color
-        pixels[:, 0:10] = color
-        pixels[:, w-10:w] = color
-
     def vertices_to_screen(self, scene, vertices):
-        camera_matrix = self.camera_matrix()
+        camera_matrix = scene.main_camera.matrix()
         transformed_vertices = scene.main_camera.R.I * scene.main_camera.T.I * vertices
         # mask = (vertices[2, :] > 0).A[0]
         # forward_vertices = vertices[:, mask]
@@ -87,21 +77,25 @@ class SDLRenderer(Renderer):
     def combine_vertices(self, vertices):
         pass
 
-    def draw_vertices(self, renderer, points, color=0xff00ff00):
+    def draw_vertices(self, points, color=0xff00ff00):
+        renderer = self.context.sdlrenderer
+
+        # points= points.round().astype(np.int32)
+
         circle = sdlgfx.aacircleColor
         # circle = sdlgfx.filledCircleColor
         for x, y in points:
             circle(renderer, x, y, 2, color)
 
-    def draw_edges(self, renderer, points, edges, color=0xff00ff00):
-        line = sdlgfx.lineColor
+    def draw_line(self, x1, y1, x2, y2, color):
         # line = sdlgfx.aalineColor
-        for p1, p2 in edges:
-            x1, y1 = points[p1]
-            x2, y2 = points[p2]
-            line(renderer, x1, y1, x2, y2, color)
+        renderer = self.context.sdlrenderer
+        sdlgfx.lineColor(renderer, x1, y1, x2, y2, color)
 
-    def draw_polys(self, renderer, points, polys, color=0xff00ff00):
+    def draw_polys(self, points, polys, color=0xff00ff00):
+        renderer = self.context.sdlrenderer
+        points= points.round().astype(np.int32)
+
         original_color = color
 
 
@@ -121,64 +115,16 @@ class SDLRenderer(Renderer):
             x2, y2 = points[p3]
             line(renderer, x1, y1, x2, y2, color)
 
-            # slow
-            # lines = (*points[p1], *points[p2], *points[p3])
-            # color = sdl2.ext.Color(r=255, g=255, b=0, a=255)
-            # self.context.draw_line(lines, color)
+    def clear(self):
+        self.context.clear(0)
 
-    def render(self, scene, clear=True, axes=False, draw_vertices=True, draw_polys=False):
-
+    def prerender(self):
         # get events or sdl window won't show
         self.handle_events()
 
-        self.frame += 1
-        context = self.context
-        if clear:
-            context.clear(0)
-        renderer = context.sdlrenderer
-
-        vertices = []
-        edges = []
-        polys = []
-        n_points = 0
-        for name, obj in scene.objects.items():
-            obj.update()
-            obj_vertices = obj.transformed_vertices
-            vertices.append(obj_vertices)
-            # increment edge index
-            obj_edges = [((edge[0]+n_points), (edge[1] + n_points)) for edge in obj.edges]
-            edges.extend(obj_edges)
-
-            obj_polys = [((face[0]+n_points), (face[1] + n_points), (face[2] + n_points)) for face in obj.polys]
-            polys.extend(obj_polys)
-
-            n_points += obj_vertices.shape[1]
-
-        vertices_matrix = np.hstack(vertices)
-        points = self.vertices_to_screen(scene, vertices_matrix)
-
-        points_list = points.T.tolist()
-        if draw_vertices:
-            self.draw_vertices(renderer, points_list)
-        self.draw_edges(renderer, points_list, edges)
-        if draw_polys:
-            self.draw_polys(renderer, points_list, polys)
-
-        if axes:
-            self.draw_axes(scene)
-        context.present()
+    def postrender(self):
+        self.context.present()
         self.window.refresh()
-
-    def camera_matrix(self):
-        cx = self.width / 2
-        cy = self.height / 2
-        f = self.f
-
-        return np.matrix([
-            [f, 0, cx, 0],
-            [0, -f, cy, 0],
-            [0, 0, 1, 0]
-        ], dtype=np.float64)
 
     def quit(self):
         sdl2.ext.quit()
