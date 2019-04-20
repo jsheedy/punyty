@@ -7,7 +7,7 @@ setup(
     author='Joseph Sheedy',
     author_email='joseph.sheedy@gmail.com',
     url='https://github.com/jsheedy/punyty',
-    install_requires=['numpy'],
+    install_requires=['numpy', 'scikit-image'],
     extras_require={
         'SDL': ['PySDL2'],
     },
