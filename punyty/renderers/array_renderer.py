@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class ArrayRenderer(Renderer):
     """ renders to a numpy array """
 
-    def __init__(self, target_array, *args, **kwargs):
+    def __init__(self,  *args, target_array=None, **kwargs):
         super().__init__(*args, **kwargs)
         h, w = target_array.shape[:2]
         self.width = w
@@ -47,11 +47,12 @@ class ArrayRenderer(Renderer):
         iy0 = int(y0 * (self.height-1))
         ix1 = int(x1 * (self.width-1))
         iy1 = int(y1 * (self.height-1))
-        rr, cc = line(ix0, iy0, ix1, iy1)
+        rr, cc, val = line_aa(ix0, iy0, ix1, iy1)
         r,g,b = rgb
-        self.target_array[rr, cc, 0] += r
-        self.target_array[rr, cc, 1] += g
-        self.target_array[rr, cc, 2] += b
+        # import pdb;pdb.set_trace()
+        self.target_array[cc, rr, 0] += val * r
+        self.target_array[cc, rr, 1] += val * g
+        self.target_array[cc, rr, 2] += val * b
 
     def draw_edges(self, points, edges, color=(0,1,0)):
         for p1, p2 in edges:

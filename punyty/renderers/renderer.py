@@ -6,14 +6,11 @@ class Renderer():
     def __init__(self, *args, **kwargs):
         self.frame = 0
 
-    def draw_edges(self, points, edges):
-        raise NotImplementedError
-
     def draw_line(self, x1, y1, x2, y2, color):
         raise NotImplementedError
 
     def clear(self):
-        raise NotImplementedError
+        pass
 
     def prerender(self):
         pass
@@ -33,7 +30,7 @@ class Renderer():
     def draw_polys(self, points, polys):
         pass
 
-    def render(self, scene, clear=True, axes=False, draw_vertices=False, draw_polys=False):
+    def render(self, scene, clear=True, draw_vertices=False, draw_polys=False):
         self.prerender()
         if clear:
             self.clear()
@@ -64,9 +61,6 @@ class Renderer():
         self.draw_edges(points_list, edges)
         if draw_polys:
             self.draw_polys(points_list, polys)
-
-        if axes:
-            self.draw_axes(scene)
 
         self.postrender()
 

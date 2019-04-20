@@ -17,12 +17,14 @@ if __name__ == '__main__':
     scene = Scene()
     cube = Cube()
     scene.add_object(cube)
-    renderer = ArrayRenderer(target_array)
+    renderer = ArrayRenderer(target_array=target_array)
 
     plt.show()
     matplotlib.interactive(False)
 
-    for i in range(2):
+    for i in range(20):
+        renderer.render(scene)
         plt.imshow(target_array)
         plt.show()
+        cube.rotate(Vector3(time.time(), 0, 0))
         time.sleep(0.1)
