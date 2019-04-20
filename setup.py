@@ -1,9 +1,5 @@
 from setuptools import setup, find_packages
 
-
-with open('requirements.txt') as f:
-    requirements = f.read().splitlines()
-
 setup(
     name='punyty',
     version='0.0.0',
@@ -11,6 +7,9 @@ setup(
     author='Joseph Sheedy',
     author_email='joseph.sheedy@gmail.com',
     url='https://github.com/jsheedy/punyty',
-    install_requires=requirements,
+    install_requires=['numpy'],
+    extras_require={
+        'SDL': ['PySDL2'],
+    },
     packages=find_packages()
 )

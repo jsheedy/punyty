@@ -1,5 +1,6 @@
 import logging
 import math
+import sys
 
 import numpy as np
 
@@ -12,7 +13,8 @@ try:
     import sdl2.ext
     from sdl2 import sdlgfx
 except ImportError:
-    logger.warning(f'SDLRenderer unable to import SDL')
+    logger.critical(f'SDLRenderer unable to import SDL. Try: pip install PySDL')
+    sys.exit(-1)
 
 class SDLRenderer(Renderer):
     def __init__(self, width=800, height=600, f=2000, window_title="punyty"):
