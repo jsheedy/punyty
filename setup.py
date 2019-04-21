@@ -11,5 +11,10 @@ setup(
     extras_require={
         'SDL': ['PySDL2'],
     },
+    entry_points = {
+        'console_scripts': [
+            'punytty = demo.punytty:punytty'
+        ]
+    },
     packages=find_packages()
 )

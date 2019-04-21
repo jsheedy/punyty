@@ -6,8 +6,7 @@ from punyty.renderers import TTYRenderer
 from punyty.scene import Scene
 
 
-if __name__ == '__main__':
-
+def punytty():
     scene = Scene()
     cube = Cube()
     scene.add_object(cube)
@@ -15,3 +14,6 @@ if __name__ == '__main__':
     while True:
         cube.rotate(Vector3(time.time(), 0.5*time.time(), 0.1*time.time()))
         renderer.render(scene)
+
+if __name__ == '__main__':
+    punytty()
