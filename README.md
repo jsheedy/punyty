@@ -26,4 +26,4 @@ python demo/tty-renderer.py
 ```
 
 ![](https://i.imgur.com/8OKM5L3.png)
-![](https://i.imgur.com/2VpD7wC.gifv)
+![](punytty.gif)
