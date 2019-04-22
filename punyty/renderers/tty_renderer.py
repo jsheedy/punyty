@@ -30,10 +30,9 @@ class TTYRenderer(ArrayRenderer):
 
     def render(self, scene, **kwargs):
         super().render(scene, **kwargs)
-        sys.stdout.buffer.write(HOME)
         colors = (255 * self.target_array).astype(np.uint8)
-        for r in range(self.rows):
-            for c in range(self.cols):
-                color = tuple(colors[r, c, :])
-                p = self.pixel(color=color)
-                sys.stdout.buffer.write(p)
+
+        l = colors.reshape(self.cols*self.rows, 3).tolist()
+        s = b''.join(map(lambda c: self.pixel(color=tuple(c)), l))
+        sys.stdout.buffer.write(HOME)
+        sys.stdout.buffer.write(s)
