@@ -22,7 +22,7 @@ python demo/sdl-renderer.py
 ```
 
 ```
-python demo/tty-renderer.py
+punytty
 ```
 
 ![](https://i.imgur.com/8OKM5L3.png)
