@@ -1,6 +1,4 @@
 import logging
-import math
-import sys
 
 import numpy as np
 import sdl2
@@ -13,23 +11,17 @@ logger = logging.getLogger(__name__)
 
 
 class SDLRenderer(Renderer):
-    def __init__(self, width=800, height=600, f=2000, window_title="punyty"):
+    def __init__(self, width=800, height=600, f=2000, window_title="punyty", **kwargs):
+        super().__init__(**kwargs)
         self.width = width
         self.height = height
         self.f = f
-        self.frame = 0
         sdl2.ext.init()
 
-        # sdl2.mouse.SDL_ShowCursor(0)
         flags = 0
-        # flags = sdl2.SDL_RENDERER_SOFTWARE
         self.window = sdl2.ext.Window(window_title, flags=flags, size=(width, height))
         self.window.show()
-        # self.surface = self.window.get_surface()
         self.context = sdl2.ext.Renderer(self.window)
-        # self.context.clear(0)
-        # self.context.present()
-        # self.context.clear(0)
 
     def draw_axes(self, scene, length=1):
 
@@ -85,17 +77,20 @@ class SDLRenderer(Renderer):
         for x, y in points:
             circle(renderer, x, y, 2, color)
 
-    def draw_line(self, x1, y1, x2, y2, color):
-        # line = sdlgfx.aalineColor
+    def draw_line(self, points, color):
+        x1, y1, x2, y2 = points
+        r, g, b = color
+        color = 0xff000000 \
+            + (int(r * 255) << 16) \
+            + (int(g * 255) << 8) \
+            + int(b * 255)
+
         renderer = self.context.sdlrenderer
-        sdlgfx.lineColor(renderer, x1, y1, x2, y2, color)
+        sdlgfx.aalineColor(renderer, x1, y1, x2, y2, color)
 
     def draw_polys(self, points, polys, color=0xff00ff00):
         renderer = self.context.sdlrenderer
-        points= points.round().astype(np.int32)
-
-        original_color = color
-
+        points = points.round().astype(np.int32)
 
         line = sdlgfx.lineColor
         # line = sdlgfx.aalineColor
@@ -136,4 +131,3 @@ class SDLRenderer(Renderer):
 
             elif event.type == sdl2.SDL_QUIT:
                 raise Exception('user quit')
-

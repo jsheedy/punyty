@@ -17,10 +17,10 @@ HOME = ESC + b'0;0H'
 class TTYRenderer(ArrayRenderer):
     """ renders to a tty """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.cols, self.rows = shutil.get_terminal_size()
         self.target_array = np.zeros((self.rows, self.cols, 3))
-        super().__init__(target_array=self.target_array)
+        super().__init__(target_array=self.target_array, **kwargs)
 
     @lru_cache()
     def pixel(self, color=(0, 255, 0)):
@@ -28,10 +28,8 @@ class TTYRenderer(ArrayRenderer):
         r, g, b = color
         return ESC + b'38;2;' + f'{r};{g};{b}'.encode('utf8') + b'm' + block
 
-    def render(self, scene, **kwargs):
-        super().render(scene, **kwargs)
+    def postrender(self):
         colors = (255 * self.target_array).astype(np.uint8)
-
         l = colors.reshape(self.cols*self.rows, 3).tolist()
         s = b''.join(map(lambda c: self.pixel(color=tuple(c)), l))
         sys.stdout.buffer.write(HOME)

@@ -8,12 +8,13 @@ from punyty.scene import Scene
 
 def punytty():
     scene = Scene()
-    cube = Cube()
+    cube = Cube(color=(1, 0, 1))
     scene.add_object(cube)
     renderer = TTYRenderer()
     while True:
         cube.rotate(Vector3(time.time(), 0.5*time.time(), 0.1*time.time()))
         renderer.render(scene)
+
 
 if __name__ == '__main__':
     punytty()

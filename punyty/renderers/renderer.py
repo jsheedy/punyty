@@ -6,7 +6,7 @@ class Renderer():
     def __init__(self, *args, **kwargs):
         self.frame = 0
 
-    def draw_line(self, x1, y1, x2, y2, color):
+    def draw_line(self, points, color):
         raise NotImplementedError
 
     def clear(self):
@@ -18,11 +18,12 @@ class Renderer():
     def postrender(self):
         pass
 
-    def draw_edges(self, points, edges, color=0xff00ff00):
+    def draw_edges(self, points, edges):
+        edges, color = edges
         for p1, p2 in edges:
             x1, y1 = points[p1]
             x2, y2 = points[p2]
-            self.draw_line(x1, y1, x2, y2, color)
+            self.draw_line((x1, y1, x2, y2), color)
 
     def draw_vertices(self, verts):
         pass
@@ -45,7 +46,7 @@ class Renderer():
             vertices.append(obj_vertices)
             # increment edge index
             obj_edges = [((edge[0]+n_points), (edge[1] + n_points)) for edge in obj.edges]
-            edges.extend(obj_edges)
+            edges.extend((obj_edges, obj.color))
 
             obj_polys = [((face[0]+n_points), (face[1] + n_points), (face[2] + n_points)) for face in obj.polys]
             polys.extend(obj_polys)

@@ -10,13 +10,14 @@ class Object3D:
     vertices = ()
     edges = ()
 
-    def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None):
+    def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None, color=(0, 1, 0)):
         self._translation_matrix = translation_matrix(position or Vector3())
         self.update_time = datetime.now()
         self.velocity = velocity
         self.angular_velocity = angular_velocity
         self._scale_matrix = scale_matrix(scale or Vector3.unity())
         self._rotation_matrix = rotation_matrix(rotation)
+        self.color = color
 
     def update(self):
         self.update_physics()
