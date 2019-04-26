@@ -61,7 +61,7 @@ class Renderer():
             self.draw_vertices(points_list)
         self.draw_edges(points_list, edges)
         if draw_polys:
-            self.draw_polys(points_list, polys)
+            self.draw_polys(scene, vertices_matrix, points, polys)
 
         self.postrender()
 

@@ -38,7 +38,7 @@ class Cube(Object3D):
             (3, 7),
         )
 
-        self.polys = (
+        self.polys = np.array((
             (0, 1, 2),
             (2, 3, 0),
             (4, 7, 6),
@@ -51,7 +51,7 @@ class Cube(Object3D):
             (6, 7, 3),
             (5, 1, 0),
             (0, 4, 5),
-        )
+        ), dtype=np.uint32)
 
 
 class Tetrahedron(Object3D):

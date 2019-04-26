@@ -10,6 +10,14 @@ from .renderer import Renderer
 logger = logging.getLogger(__name__)
 
 
+def color_to_sdl(color):
+    r, g, b = color
+    return 0xff000000 \
+        + (int(r * 255) << 16) \
+        + (int(g * 255) << 8) \
+        + int(b * 255)
+
+
 class SDLRenderer(Renderer):
     def __init__(self, width=800, height=600, f=2000, window_title="punyty", **kwargs):
         super().__init__(**kwargs)
@@ -79,34 +87,44 @@ class SDLRenderer(Renderer):
 
     def draw_line(self, points, color):
         x1, y1, x2, y2 = points
-        r, g, b = color
-        color = 0xff000000 \
-            + (int(r * 255) << 16) \
-            + (int(g * 255) << 8) \
-            + int(b * 255)
-
+        color = color_to_sdl(color)
         renderer = self.context.sdlrenderer
         sdlgfx.aalineColor(renderer, x1, y1, x2, y2, color)
 
-    def draw_polys(self, points, polys, color=0xff00ff00):
+    def draw_polys(self, scene, vertices, points, polys, color=(0, 1.0, 0)):
         renderer = self.context.sdlrenderer
-        points = points.round().astype(np.int32)
 
-        line = sdlgfx.lineColor
-        # line = sdlgfx.aalineColor
-        for p1, p2, p3 in polys:
+        # light_normal = light / np.linalg.norm(light)
+        points = points.T.tolist()
+
+        npolys = np.array(polys, dtype=np.uint32)
+        poly_coords = vertices[:3,:].T[npolys]
+
+        p0 = poly_coords[:,:,0::3].A
+        p1 = poly_coords[:,:,1::3].A
+        p2 = poly_coords[:,:,2::3].A
+        l1 = p1 - p0
+        l2 = p2 - p0
+        normals = np.cross(l1, l2, axis=1)
+
+        lighting = np.dot(scene.main_light.A.T, normals)
+
+        sdl_color = color_to_sdl(color)
+
+        for i, (p1, p2, p3) in enumerate(polys):
 
             x1, y1 = points[p1]
             x2, y2 = points[p2]
-            line(renderer, x1, y1, x2, y2, color)
+            x3, y3 = points[p3]
 
-            x1, y1 = points[p1]
-            x2, y2 = points[p3]
-            line(renderer, x1, y1, x2, y2, color)
+            sdlgfx.aalineColor(renderer, x1, y1, x2, y2, sdl_color)
+            sdlgfx.aalineColor(renderer, x1, y1, x3, y3, sdl_color)
+            sdlgfx.aalineColor(renderer, x2, y2, x3, y3, sdl_color)
 
-            x1, y1 = points[p2]
-            x2, y2 = points[p3]
-            line(renderer, x1, y1, x2, y2, color)
+            l = lighting[i]
+
+            lighted_color = color_to_sdl(map(lambda x: x * l, color))
+            sdlgfx.filledTrigonColor(renderer, x1, y1, x2, y2, x3, y3, lighted_color)
 
     def clear(self):
         self.context.clear(0)

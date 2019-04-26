@@ -1,5 +1,6 @@
 import math
 
+import numpy as np
 
 class ZeroVectorError(Exception): pass
 
@@ -14,6 +15,10 @@ class Vector3:
     @classmethod
     def unity(cls):
         return cls(1,1,1)
+
+    @property
+    def A(self):
+        return np.array((self.x, self.y, self.z))
 
     def __add__(self, other):
         return Vector3(

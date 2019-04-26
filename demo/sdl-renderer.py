@@ -16,5 +16,5 @@ if __name__ == '__main__':
 
     while True:
         t = time.time()
-        renderer.render(scene)
+        renderer.render(scene, draw_polys=True)
         cube.rotate(Vector3(t, t, 0))
