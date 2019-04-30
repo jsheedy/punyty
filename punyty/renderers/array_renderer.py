@@ -1,6 +1,7 @@
 import logging
 
 from skimage.draw import line_aa
+from skimage.draw import polygon
 
 from .renderer import Renderer
 
@@ -35,3 +36,16 @@ class ArrayRenderer(Renderer):
         self.target_array[ccm, rrm, 0] += valm * r
         self.target_array[ccm, rrm, 1] += valm * g
         self.target_array[ccm, rrm, 2] += valm * b
+
+    def draw_poly(self, x1, y1, x2, y2, x3, y3, color):
+        rows = tuple(map(lambda x: x*(self.height-1), (y1, y2, y3)))
+        cols = tuple(map(lambda x: x*(self.width-1), (x1, x2, x3)))
+
+        r, g, b = color
+        rr, cc = polygon(cols, rows, shape=None)
+        mask = (rr >= 0) & (rr < self.width) & (cc >= 0) & (cc < self.height)
+        ccm = cc[mask]
+        rrm = rr[mask]
+        self.target_array[ccm, rrm, 0] += r
+        self.target_array[ccm, rrm, 1] += g
+        self.target_array[ccm, rrm, 2] += b

@@ -28,10 +28,41 @@ class Renderer():
     def draw_vertices(self, verts):
         pass
 
-    def draw_polys(self, points, polys):
+    def draw_poly(self, x1, y1, x2, y2, x3, y3, color):
         pass
 
-    def render(self, scene, clear=True, draw_vertices=False, draw_polys=False):
+    def draw_polys(self, scene, vertices, points, polys, color=(0, 1.0, 0)):
+
+        points = points.T.tolist()
+
+        polys = np.array(polys)
+        poly_coords = vertices[:3,:].T[polys]
+
+        p0 = poly_coords[:, 0::3, :].A.squeeze()
+        p1 = poly_coords[:, 1::3, :].A.squeeze()
+        p2 = poly_coords[:, 2::3, :].A.squeeze()
+        l1 = p1 - p0
+        l2 = p2 - p1
+        cross = np.cross(l2, l1, axis=1)
+        normals = cross / np.expand_dims(np.linalg.norm(cross,axis=1), 2)
+
+        light_vector = scene.main_light.position.A - np.mean(poly_coords.A, axis=2)
+        light_vector = light_vector / np.expand_dims(np.linalg.norm(light_vector, axis=1), 2)
+
+        dot_products = (light_vector * normals).sum(axis=1)
+        for i, (p1, p2, p3) in enumerate(polys):
+
+            x1, y1 = points[p1]
+            x2, y2 = points[p2]
+            x3, y3 = points[p3]
+
+            l = dot_products[i]
+
+            if l > 0:
+                lighted_color = tuple(map(lambda x: x * l, color))
+                self.draw_poly(x1, y1, x2, y2, x3, y3, lighted_color)
+
+    def render(self, scene, clear=True, draw_edges=True, draw_vertices=False, draw_polys=False):
         self.prerender()
         if clear:
             self.clear()
@@ -59,7 +90,7 @@ class Renderer():
         points_list = points.T.tolist()
         if draw_vertices:
             self.draw_vertices(points_list)
-        if edges:
+        if edges and draw_edges:
             self.draw_edges(points_list, edges)
         if draw_polys:
             self.draw_polys(scene, vertices_matrix, points, polys)

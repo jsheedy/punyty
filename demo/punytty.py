@@ -13,8 +13,7 @@ def punytty():
     renderer = TTYRenderer()
     while True:
         cube.rotate(Vector3(time.time(), 0.5*time.time(), 0.1*time.time()))
-        renderer.render(scene)
-
+        renderer.render(scene, draw_polys=True, draw_edges=True)
 
 if __name__ == '__main__':
     punytty()
