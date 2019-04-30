@@ -59,7 +59,8 @@ class Renderer():
         points_list = points.T.tolist()
         if draw_vertices:
             self.draw_vertices(points_list)
-        self.draw_edges(points_list, edges)
+        if edges:
+            self.draw_edges(points_list, edges)
         if draw_polys:
             self.draw_polys(scene, vertices_matrix, points, polys)
 

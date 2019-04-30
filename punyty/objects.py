@@ -4,6 +4,28 @@ import numpy as np
 from .object3d import Object3D
 
 
+class Tetrahedron(Object3D):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        vertices = np.matrix([
+            [1, 1, 1],
+            [-1, -1, 1],
+            [1, -1, -1],
+            [-1, 1, -1],
+        ], dtype=np.float64)
+
+        self.edges = (
+            (0, 1),
+            (1, 2),
+            (2, 3),
+            (1, 3),
+            (0, 2),
+            (0, 3),
+        )
+        self.vertices = self.to_homogenous_coords(vertices / 2)
+
+
 class Cube(Object3D):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

@@ -92,39 +92,35 @@ class SDLRenderer(Renderer):
         sdlgfx.aalineColor(renderer, x1, y1, x2, y2, color)
 
     def draw_polys(self, scene, vertices, points, polys, color=(0, 1.0, 0)):
-        renderer = self.context.sdlrenderer
 
-        # light_normal = light / np.linalg.norm(light)
         points = points.T.tolist()
 
-        npolys = np.array(polys, dtype=np.uint32)
-        poly_coords = vertices[:3,:].T[npolys]
+        polys = np.array(polys)
+        poly_coords = vertices[:3,:].T[polys]
 
-        p0 = poly_coords[:,:,0::3].A
-        p1 = poly_coords[:,:,1::3].A
-        p2 = poly_coords[:,:,2::3].A
+        p0 = poly_coords[:, 0::3, :].A.squeeze()
+        p1 = poly_coords[:, 1::3, :].A.squeeze()
+        p2 = poly_coords[:, 2::3, :].A.squeeze()
         l1 = p1 - p0
-        l2 = p2 - p0
-        normals = np.cross(l1, l2, axis=1)
+        l2 = p2 - p1
+        cross = np.cross(l2, l1, axis=1)
+        normals = cross / np.expand_dims(np.linalg.norm(cross,axis=1), 2)
 
-        lighting = np.dot(scene.main_light.A.T, normals)
+        light_vector = scene.main_light.position.A - np.mean(poly_coords.A, axis=2)
+        light_vector = light_vector / np.expand_dims(np.linalg.norm(light_vector, axis=1), 2)
 
-        sdl_color = color_to_sdl(color)
-
+        dot_products = (light_vector * normals).sum(axis=1)
         for i, (p1, p2, p3) in enumerate(polys):
 
             x1, y1 = points[p1]
             x2, y2 = points[p2]
             x3, y3 = points[p3]
 
-            sdlgfx.aalineColor(renderer, x1, y1, x2, y2, sdl_color)
-            sdlgfx.aalineColor(renderer, x1, y1, x3, y3, sdl_color)
-            sdlgfx.aalineColor(renderer, x2, y2, x3, y3, sdl_color)
+            l = dot_products[i]
 
-            l = lighting[i]
-
-            lighted_color = color_to_sdl(map(lambda x: x * l, color))
-            sdlgfx.filledTrigonColor(renderer, x1, y1, x2, y2, x3, y3, lighted_color)
+            if l > 0:
+                lighted_color = color_to_sdl(map(lambda x: x * l, color))
+                sdlgfx.filledTrigonColor(self.context.sdlrenderer, x1, y1, x2, y2, x3, y3, lighted_color)
 
     def clear(self):
         self.context.clear(0)

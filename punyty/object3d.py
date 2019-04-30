@@ -11,7 +11,7 @@ class Object3D:
     edges = ()
 
     def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None, color=(0, 1, 0)):
-        self._translation_matrix = translation_matrix(position or Vector3())
+        self.position = position or Vector3()
         self.update_time = datetime.now()
         self.velocity = velocity
         self.angular_velocity = angular_velocity
@@ -35,17 +35,17 @@ class Object3D:
     def to_homogenous_coords(self, vertices):
         return np.hstack([vertices, np.matrix(np.ones(vertices.shape[0])).T]).T
 
-    @property
-    def position(self):
-        return Vector3(*self.T[:3,3])
+    # @property
+    # def position(self):
+    #     return Vector3(*self.T[:3,3])
 
-    @position.setter
-    def position(self, v):
-        self._translation_matrix = translation_matrix(v)
+    # @position.setter
+    # def position(self, v):
+    #     self._translation_matrix = translation_matrix(v)
 
     @property
     def T(self):
-        return self._translation_matrix
+        return translation_matrix(self.position)
 
     @property
     def R(self):
