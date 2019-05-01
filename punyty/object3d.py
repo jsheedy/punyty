@@ -9,6 +9,8 @@ from .vector import Vector3, ZeroVectorError
 class Object3D:
     vertices = ()
     edges = ()
+    polys = ()
+    normals = ()
 
     def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None, color=(0, 1, 0)):
         self.position = position or Vector3()
@@ -18,6 +20,19 @@ class Object3D:
         self._scale_matrix = scale_matrix(scale or Vector3.unity())
         self._rotation_matrix = rotation_matrix(rotation)
         self.color = color
+        if (not self.normals) and self.polys:
+            self.normals = self.calculate_normals()
+
+    def calculate_normals(self):
+        polys = np.array(self.polys, dtype=np.uint32)
+        poly_coords = self.vertices[polys]
+        p0 = poly_coords[:, 0::3, :].A.squeeze()
+        p1 = poly_coords[:, 1::3, :].A.squeeze()
+        p2 = poly_coords[:, 2::3, :].A.squeeze()
+        l1 = p1 - p0
+        l2 = p2 - p1
+        cross = np.cross(l2, l1, axis=1)
+        return cross / np.expand_dims(np.linalg.norm(cross, axis=1), 2)
 
     def update(self):
         self.update_physics()
@@ -58,6 +73,10 @@ class Object3D:
     @property
     def transformed_vertices(self):
         return self.T * self.R * self.S * self.vertices
+
+    @property
+    def transformed_normals(self):
+        return self.T * self.R * self.S * self.normals
 
     def set_scale(self, scale):
         self._scale_matrix = scale_matrix(Vector3(scale, scale, scale))

@@ -27,53 +27,55 @@ class Tetrahedron(Object3D):
 
 
 class Cube(Object3D):
+
+    polys = (
+        (0, 1, 2),
+        (2, 3, 0),
+        (4, 7, 6),
+        (6, 5, 4),
+        (1, 5, 6),
+        (6, 2, 1),
+        (0, 3, 7),
+        (7, 4, 0),
+        (3, 2, 6),
+        (6, 7, 3),
+        (5, 1, 0),
+        (0, 4, 5),
+    )
+
+    edges = (
+        (0, 1),
+        (1, 2),
+        (2, 3),
+        (3, 0),
+
+        (4, 5),
+        (5, 6),
+        (6, 7),
+        (7, 4),
+
+        (0, 4),
+        (1, 5),
+        (2, 6),
+        (3, 7),
+    )
+
+    vertices = np.matrix([
+        [1, 1, -1],
+        [-1, 1, -1],
+        [-1, -1, -1],
+        [1, -1, -1],
+
+        [1, 1, 1],
+        [-1, 1, 1],
+        [-1, -1, 1],
+        [1, -1, 1]
+    ], dtype=np.float64)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        vertices = np.matrix([
-            [1, 1, -1],
-            [-1, 1, -1],
-            [-1, -1, -1],
-            [1, -1, -1],
-
-            [1, 1, 1],
-            [-1, 1, 1],
-            [-1, -1, 1],
-            [1, -1, 1]
-        ], dtype=np.float64)
-        self.vertices = self.to_homogenous_coords(vertices / 2)
-
-        self.edges = (
-            (0, 1),
-            (1, 2),
-            (2, 3),
-            (3, 0),
-
-            (4, 5),
-            (5, 6),
-            (6, 7),
-            (7, 4),
-
-            (0, 4),
-            (1, 5),
-            (2, 6),
-            (3, 7),
-        )
-
-        self.polys = np.array((
-            (0, 1, 2),
-            (2, 3, 0),
-            (4, 7, 6),
-            (6, 5, 4),
-            (1, 5, 6),
-            (6, 2, 1),
-            (0, 3, 7),
-            (7, 4, 0),
-            (3, 2, 6),
-            (6, 7, 3),
-            (5, 1, 0),
-            (0, 4, 5),
-        ), dtype=np.uint32)
+        self.vertices = self.to_homogenous_coords(self.vertices / 2)
+        self.normals = self.to_homogenous_coords(self.normals)
 
 
 class Tetrahedron(Object3D):
