@@ -20,6 +20,6 @@ if __name__ == '__main__':
 
     while True:
         t = time.time()
-        renderer.render(scene, draw_polys=True)
+        renderer.render(scene, draw_polys=True, draw_axes=False)
         # bunny.rotate(Vector3(0, t/1, 0))
         cube.rotate(Vector3(t, t/1, t))

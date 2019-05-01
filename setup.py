@@ -16,5 +16,6 @@ setup(
             'punytty = demo.punytty:punytty'
         ]
     },
-    packages=find_packages()
+    packages=find_packages(),
+    package_data={'models': ['*']}
 )

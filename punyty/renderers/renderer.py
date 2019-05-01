@@ -62,7 +62,13 @@ class Renderer():
                 lighted_color = tuple(map(lambda x: x * l, color))
                 self.draw_poly(x1, y1, x2, y2, x3, y3, lighted_color)
 
-    def render(self, scene, clear=True, draw_edges=True, draw_vertices=False, draw_polys=False):
+    def render(self, scene,
+                    clear=True,
+                    draw_edges=True,
+                    draw_vertices=False,
+                    draw_polys=False,
+                    draw_axes=False):
+
         self.prerender()
         if clear:
             self.clear()
@@ -75,9 +81,9 @@ class Renderer():
             obj.update()
             obj_vertices = obj.transformed_vertices
             vertices.append(obj_vertices)
-            # increment edge index
-            obj_edges = [((edge[0]+n_points), (edge[1] + n_points)) for edge in obj.edges]
-            edges.extend((obj_edges, obj.color))
+            if obj.edges:
+                obj_edges = [((edge[0]+n_points), (edge[1] + n_points)) for edge in obj.edges]
+                edges.extend((obj_edges, obj.color))
 
             obj_polys = [((face[0]+n_points), (face[1] + n_points), (face[2] + n_points)) for face in obj.polys]
             polys.extend(obj_polys)
@@ -94,7 +100,8 @@ class Renderer():
             self.draw_edges(points_list, edges)
         if draw_polys:
             self.draw_polys(scene, vertices_matrix, points, polys)
-
+        if draw_axes:
+            self.draw_axes(scene)
         self.postrender()
 
     def vertices_to_screen(self, scene, vertices):
