@@ -11,6 +11,7 @@ class Object3D:
     edges = ()
     polys = ()
     normals = ()
+    centers = ()
 
     def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None, color=(0, 1, 0)):
         self.position = position or Vector3()
@@ -22,6 +23,8 @@ class Object3D:
         self.color = color
         if (not self.normals) and self.polys:
             self.normals = self.calculate_normals()
+        if (not self.centers) and self.polys:
+            self.centers = self.calculate_centers()
 
     def calculate_normals(self):
         polys = np.array(self.polys, dtype=np.uint32)
@@ -33,6 +36,12 @@ class Object3D:
         l2 = p2 - p1
         cross = np.cross(l2, l1, axis=1)
         return cross / np.expand_dims(np.linalg.norm(cross, axis=1), 2)
+
+    def calculate_centers(self):
+        polys = np.array(self.polys, dtype=np.uint32)
+        poly_coords = np.array(self.vertices)[polys]
+        centers = np.mean(poly_coords, axis=2)
+        return self.to_homogenous_coords(centers)
 
     def update(self):
         self.update_physics()
@@ -77,6 +86,10 @@ class Object3D:
     @property
     def transformed_normals(self):
         return self.T * self.R * self.S * self.normals
+
+    @property
+    def transformed_centers(self):
+        return self.T * self.R * self.S * self.centers
 
     def set_scale(self, scale):
         self._scale_matrix = scale_matrix(Vector3(scale, scale, scale))
