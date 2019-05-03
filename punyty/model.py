@@ -54,13 +54,18 @@ class Model(Object3D):
                     obj.polys.append(triangle1)
                     obj.polys.append(triangle2)
 
-            obj.vertices = points_to_matrix(vertices)
+            # obj.vertices = points_to_matrix(vertices)
+
+            obj.vertices = np.matrix(vertices)
 
             if ground:
                 min_y = obj.vertices[1, :].min()
                 obj.vertices[1, :] -= min_y / 2
+
             # centers, normals = obj.centers_and_normals()
             # obj.normals = points_to_matrix(normals)
             # obj.centers = points_to_matrix(centers)
+            obj.__init__()
+            obj.vertices = obj.to_homogenous_coords(obj.vertices)
 
             return obj

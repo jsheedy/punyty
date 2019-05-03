@@ -22,7 +22,7 @@ class Object3D:
         self._rotation_matrix = rotation_matrix(rotation)
         self.color = color
         if (not self.normals) and self.polys:
-            self.normals = self.calculate_normals()
+            self.normals = self.to_homogenous_coords(self.calculate_normals())
         if (not self.centers) and self.polys:
             self.centers = self.calculate_centers()
 

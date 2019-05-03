@@ -75,7 +75,6 @@ class Cube(Object3D):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.vertices = self.to_homogenous_coords(self.vertices / 2)
-        self.normals = self.to_homogenous_coords(self.normals)
 
 
 class Tetrahedron(Object3D):
