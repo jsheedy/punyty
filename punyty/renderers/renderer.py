@@ -20,9 +20,11 @@ class Renderer():
 
     def draw_edges(self, points, edges):
         edges, color = edges
-        edge_p = points.T[np.array(edges)]
-        for i in range(len(edges)):
-            x1, y1, x2, y2 = edge_p[i].A.flatten()
+        for p1, p2 in edges:
+            x1 = points[0, p1]
+            x2 = points[0, p2]
+            y1 = points[1, p1]
+            y2 = points[1, p2]
             self.draw_line((x1, y1, x2, y2), color)
 
     def draw_vertices(self, verts):

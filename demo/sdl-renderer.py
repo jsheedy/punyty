@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     while True:
         t = time.time()
-        renderer.render(scene, draw_edges=False, draw_polys=True, draw_axes=False)
+        renderer.render(scene, draw_edges=True, draw_polys=False, draw_axes=False)
         bunny.rotate(Vector3(renderer.joystick.y*6, renderer.joystick.x*6, 0))
         cube.rotate(Vector3(renderer.joystick.x*6, renderer.joystick.y*6))
         fps = bench.update(t)
