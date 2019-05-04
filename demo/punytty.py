@@ -1,12 +1,15 @@
 import argparse
 import os
+import sys
 import time
 
 from punyty.model import Model
 from punyty.objects import Cube
 from punyty.renderers import TTYRenderer
+from punyty.renderers.tty_renderer import ESC, RESET, HOME
 from punyty.scene import Scene
 from punyty.vector import Vector3
+from . import benchmark
 
 
 BASEDIR = os.path.dirname(__file__)
@@ -32,6 +35,12 @@ def parse_args():
         default=True,
         help='draw vertex edges'
     )
+    parser.add_argument(
+        '--fps',
+        action='store_true',
+        default=False,
+        help='print FPS'
+    )
     return parser.parse_args()
 
 
@@ -50,15 +59,23 @@ def punytty():
         objects.append(Cube(color=(0, 1, 0)))
 
 
-    renderer = TTYRenderer()
+    renderer = TTYRenderer(status_bar=args.fps)
 
     for o in objects:
         scene.add_object(o)
 
+    bench = benchmark.Benchmark(renderer)
+    fps = ''
+
     while True:
+        t = time.time()
         for o in objects:
-            o.rotate(Vector3(-.2, 0.5*time.time(), 0))
+            o.rotate(Vector3(-.2, 0.5*t, t/10))
         renderer.render(scene, draw_polys=args.polys, draw_edges=(not args.polys))
+
+        if args.fps:
+            fps = bench.update(t) or fps
+            sys.stdout.buffer.write(HOME + renderer.pixel(255, 255, 255) + fps.encode('utf8'))
 
 if __name__ == '__main__':
     punytty()
