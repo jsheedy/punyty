@@ -1,5 +1,6 @@
 import logging
 
+import numpy as np
 from skimage.draw import line_aa
 from skimage.draw import polygon
 
@@ -28,24 +29,18 @@ class ArrayRenderer(Renderer):
         ix1 = int(x1 * (self.width-1))
         iy1 = int(y1 * (self.height-1))
         rr, cc, val = line_aa(ix0, iy0, ix1, iy1)
-        r, g, b = color
         mask = (rr >= 0) & (rr < self.width) & (cc >= 0) & (cc < self.height)
         ccm = cc[mask]
         rrm = rr[mask]
         valm = val[mask]
-        self.target_array[ccm, rrm, 0] += valm * r
-        self.target_array[ccm, rrm, 1] += valm * g
-        self.target_array[ccm, rrm, 2] += valm * b
+        self.target_array[ccm, rrm] += ((np.vstack((valm, valm, valm)).T * np.array(color)))
 
     def draw_poly(self, x1, y1, x2, y2, x3, y3, color):
         rows = tuple(map(lambda x: x*(self.height-1), (y1, y2, y3)))
         cols = tuple(map(lambda x: x*(self.width-1), (x1, x2, x3)))
 
-        r, g, b = color
-        rr, cc = polygon(cols, rows, shape=None)
+        rr, cc = polygon(cols, rows)
         mask = (rr >= 0) & (rr < self.width) & (cc >= 0) & (cc < self.height)
         ccm = cc[mask]
         rrm = rr[mask]
-        self.target_array[ccm, rrm, 0] += r
-        self.target_array[ccm, rrm, 1] += g
-        self.target_array[ccm, rrm, 2] += b
+        self.target_array[ccm, rrm] += color
