@@ -1,3 +1,5 @@
+import argparse
+import os
 import time
 
 from punyty.model import Model
@@ -7,17 +9,56 @@ from punyty.scene import Scene
 from punyty.vector import Vector3
 
 
+BASEDIR = os.path.dirname(__file__)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--bunny',
+        action='store_true',
+        help='Stanford bunny'
+    )
+
+    parser.add_argument(
+        '--polys',
+        action='store_true',
+        default=False,
+        help='draw poly faces'
+    )
+    parser.add_argument(
+        '--edges',
+        action='store_true',
+        default=True,
+        help='draw vertex edges'
+    )
+    return parser.parse_args()
+
+
 def punytty():
+    args = parse_args()
     scene = Scene()
-    cube = Cube(color=(1, 0, 1))
-    scene.add_object(cube)
+    objects = []
+
+    if args.bunny:
+        path = os.path.join(BASEDIR, '../models/bunny.ply')
+        bunny = Model.load_ply(path)
+        bunny.position = Vector3(.02,-.12,-4.5)
+        objects.append(bunny)
+        args.polys = True
+    else:
+        objects.append(Cube(color=(0, 1, 0)))
+
+
     renderer = TTYRenderer()
-    # bunny = Model.load_ply('models/bunny.ply')
-    # bunny.position = Vector3(0,0,-6)
-    # scene.add_object(bunny)
+
+    for o in objects:
+        scene.add_object(o)
+
     while True:
-        cube.rotate(Vector3(time.time(), 0.5*time.time(), 0.1*time.time()))
-        renderer.render(scene, draw_polys=True, draw_edges=False)
+        for o in objects:
+            o.rotate(Vector3(-.2, 0.5*time.time(), 0))
+        renderer.render(scene, draw_polys=args.polys, draw_edges=(not args.polys))
 
 if __name__ == '__main__':
     punytty()
