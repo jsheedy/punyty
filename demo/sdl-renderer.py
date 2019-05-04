@@ -25,12 +25,10 @@ if __name__ == '__main__':
         i += 1
         t = time.time()
         renderer.render(scene, draw_edges=False, draw_polys=True, draw_axes=False)
-        bunny.rotate(Vector3(t/2, t/1, t/3))
+        bunny.rotate(Vector3(renderer.joystick.y*6, renderer.joystick.x*6, 0))
         cube.rotate(Vector3(t, t/1, t))
         if i % n_frames == 0:
             dt = t - t0
             t0 = time.time()
             fps = n_frames / dt
             print(f'fps: {fps:.2f}')
-
-        # time.sleep(0.005)

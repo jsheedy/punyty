@@ -1,3 +1,5 @@
+import ctypes
+from dataclasses import dataclass
 import logging
 
 import numpy as np
@@ -18,6 +20,12 @@ def color_to_sdl(color):
         + int(b * 255)
 
 
+@dataclass
+class Joystick():
+    x : float
+    y : float
+
+
 class SDLRenderer(Renderer):
     def __init__(self, width=800, height=600, f=2000, window_title="punyty", **kwargs):
         super().__init__(**kwargs)
@@ -30,6 +38,7 @@ class SDLRenderer(Renderer):
         self.window = sdl2.ext.Window(window_title, flags=flags, size=(width, height))
         self.window.show()
         self.context = sdl2.ext.Renderer(self.window)
+        self.joystick = Joystick(0, 0)
 
     def draw_axes(self, scene, length=1):
 
@@ -115,6 +124,12 @@ class SDLRenderer(Renderer):
             if event.type == sdl2.SDL_KEYDOWN:
                 if event.key.keysym.sym == 113:  # q
                     raise Exception('user quit')
+
+            elif event.type == sdl2.SDL_MOUSEMOTION:
+                x, y = ctypes.c_int(0), ctypes.c_int(0) # Create two ctypes values
+                _ = sdl2.mouse.SDL_GetMouseState(ctypes.byref(x), ctypes.byref(y))
+                self.joystick.y = y.value / self.height
+                self.joystick.x = x.value / self.width
 
             elif event.type == sdl2.SDL_QUIT:
                 raise Exception('user quit')
