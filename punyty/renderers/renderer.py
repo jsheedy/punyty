@@ -20,9 +20,9 @@ class Renderer():
 
     def draw_edges(self, points, edges):
         edges, color = edges
-        for p1, p2 in edges:
-            x1, y1 = points[p1]
-            x2, y2 = points[p2]
+        edge_p = points.T[np.array(edges)]
+        for i in range(len(edges)):
+            x1, y1, x2, y2 = edge_p[i].A.flatten()
             self.draw_line((x1, y1, x2, y2), color)
 
     def draw_vertices(self, verts):
@@ -98,11 +98,8 @@ class Renderer():
 
         points = self.vertices_to_screen(scene, vertices_matrix)
 
-        points_list = points.T.tolist()
-        if draw_vertices:
-            self.draw_vertices(points_list)
         if edges and draw_edges:
-            self.draw_edges(points_list, edges)
+            self.draw_edges(points, edges)
         if draw_polys:
             self.draw_polys(scene, vertices_matrix, normals_matrix, centers_matrix, points, polys)
         if draw_axes:
