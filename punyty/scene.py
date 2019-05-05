@@ -1,11 +1,11 @@
 from .camera import Camera
-from .object3d import Object3D
 from .vector import Vector3
 
 
 class DirectionalLight():
     def __init__(self, direction):
         self.direction = direction.normalize().A
+
 
 class Scene:
     def __init__(self, f=3.0, cx=0.5, cy=0.5):

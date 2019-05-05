@@ -23,12 +23,12 @@ class Model(Object3D):
             vertices = []
             obj.polys = []
 
-            for i in range(n_vertices):
+            for _ in range(n_vertices):
                 recs = f.readline().split()
                 p = list(map(float, recs[:3]))
                 vertices.append(p)
 
-            for i in range(n_faces):
+            for _ in range(n_faces):
                 recs = f.readline().split()
                 p = tuple(map(int, recs))
 

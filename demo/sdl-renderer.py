@@ -14,7 +14,7 @@ if __name__ == '__main__':
     cube = Cube(color=(0, 1, 1))
     scene.add_object(cube)
     bunny = Model.load_ply('models/bunny.ply')
-    bunny.position = Vector3(0,-.1,-4)
+    bunny.position = Vector3(0, -.1, -4)
     # scene.add_object(bunny)
     renderer = SDLRenderer(width=width, height=height)
 

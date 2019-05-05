@@ -77,28 +77,6 @@ class Cube(Object3D):
         self.vertices = self.to_homogenous_coords(self.vertices / 2)
 
 
-class Tetrahedron(Object3D):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        vertices = np.array([
-            [1, 1, 1],
-            [-1, -1, 1],
-            [1, -1, -1],
-            [-1, 1, -1],
-        ], dtype=np.float64)
-
-        self.edges = (
-            (0, 1),
-            (1, 2),
-            (2, 3),
-            (1, 3),
-            (0, 2),
-            (0, 3),
-        )
-        self.vertices = self.to_homogenous_coords(vertices / 2)
-
-
 class Octahedron(Object3D):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -141,30 +119,27 @@ class Dodecahedron(Object3D):
 
         vertices = np.array([
             # cube
-            [1, 1, 1], # 0
+            [1, 1, 1],
             [1, -1, 1],
             [-1, -1, 1],
             [-1, 1, 1],
 
-            [1, 1, -1], # 3
+            [1, 1, -1],
             [1, -1, -1],
             [-1, -1, -1],
             [-1, 1, -1],
 
-            # red/pink rectangle (xy)
-            [phi, 1/phi, 0], # 8
+            [phi, 1/phi, 0],
             [phi, -1/phi, 0],
             [-phi, -1/phi, 0],
             [-phi, 1/phi, 0],
 
-            #green rectangle (yz)
-            [0, phi, 1/phi],  #12
+            [0, phi, 1/phi],
             [0, phi, -1/phi],
             [0, -phi, -1/phi],
             [0, -phi, 1/phi],
 
-            # blue rectangle (xz)
-            [1/phi, 0, phi], # 16
+            [1/phi, 0, phi],
             [1/phi, 0, -phi],
             [-1/phi, 0, -phi],
             [-1/phi, 0, phi]

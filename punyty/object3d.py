@@ -62,7 +62,7 @@ class Object3D:
 
     @property
     def position(self):
-        return Vector3(*self.T[:3,3])
+        return Vector3(*self.T[:3, 3])
 
     @position.setter
     def position(self, v):
@@ -70,7 +70,7 @@ class Object3D:
 
     @property
     def scale(self):
-        return Vector3(*self.S[:3,3])
+        return Vector3(*self.S[:3, 3])
 
     @scale.setter
     def scale(self, scale):
@@ -108,7 +108,6 @@ class Object3D:
             raise Exception("can't look at self")
 
         z_axis = (target - self.position).normalize()
-
 
         if up:
             up = up.normalize()

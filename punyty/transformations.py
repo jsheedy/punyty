@@ -3,6 +3,7 @@ import numpy as np
 
 from .vector import Vector3
 
+
 def rotation_matrix(rotation=None):
     r = rotation or Vector3()
     rot_x = np.array([
@@ -49,4 +50,3 @@ def translation_matrix(t=None):
         [0, 0, 1, t.z],
         [0, 0, 0, 1]
     ], dtype=np.float64)
-

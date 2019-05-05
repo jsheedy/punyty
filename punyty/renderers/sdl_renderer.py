@@ -80,16 +80,6 @@ class SDLRenderer(Renderer):
     def combine_vertices(self, vertices):
         pass
 
-    def draw_vertices(self, points, color=0xff00ff00):
-        renderer = self.context.sdlrenderer
-
-        # points= points.round().astype(np.int32)
-
-        circle = sdlgfx.aacircleColor
-        # circle = sdlgfx.filledCircleColor
-        for x, y in points:
-            circle(renderer, x, y, 2, color)
-
     def draw_line(self, points, color):
         x1, y1, x2, y2 = points
         color = color_to_sdl(color)

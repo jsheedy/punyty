@@ -9,6 +9,9 @@ class Renderer():
     def draw_line(self, points, color):
         raise NotImplementedError
 
+    def draw_axes(self, scene):
+        pass
+
     def clear(self):
         pass
 
@@ -44,7 +47,7 @@ class Renderer():
         depth_coords = [(distance[i], i) for i in forward_polys]
         depth_coords.sort(reverse=True)
 
-        for depth, i in depth_coords:
+        for _, i in depth_coords:
             l = light_dot_products[i]
             p1, p2, p3 = polys[i]
             x1, y1 = points[0, p1], points[1, p1]
@@ -57,7 +60,6 @@ class Renderer():
     def render(self, scene,
                     clear=True,
                     draw_edges=True,
-                    draw_vertices=False,
                     draw_polys=False,
                     draw_axes=False):
 
@@ -72,7 +74,7 @@ class Renderer():
         edges = []
         polys = []
         n_points = 0
-        for _name, obj in scene.objects.items():
+        for _, obj in scene.objects.items():
             obj.update()
             vertices.append(obj.transformed_vertices)
             normals.append(obj.transformed_normals)
