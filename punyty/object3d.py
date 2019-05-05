@@ -18,6 +18,7 @@ class Object3D:
         self.update_time = datetime.now()
         self.velocity = velocity
         self.angular_velocity = angular_velocity
+        self._translation_matrix = translation_matrix(position or Vector3.zero())
         self._scale_matrix = scale_matrix(scale or Vector3.unity())
         self._rotation_matrix = rotation_matrix(rotation)
         self.color = color
@@ -29,9 +30,9 @@ class Object3D:
     def calculate_normals(self):
         polys = np.array(self.polys, dtype=np.uint32)
         poly_coords = self.vertices[polys]
-        p0 = poly_coords[:, 0::3, :].A.squeeze()
-        p1 = poly_coords[:, 1::3, :].A.squeeze()
-        p2 = poly_coords[:, 2::3, :].A.squeeze()
+        p0 = poly_coords[:, 0::3, :].squeeze()
+        p1 = poly_coords[:, 1::3, :].squeeze()
+        p2 = poly_coords[:, 2::3, :].squeeze()
         l1 = p1 - p0
         l2 = p2 - p1
         cross = np.cross(l2, l1, axis=1)
@@ -57,19 +58,27 @@ class Object3D:
         # self.rotation += self.angular_velocity * time_dot_delta_time
 
     def to_homogenous_coords(self, vertices):
-        return np.hstack([vertices, np.matrix(np.ones(vertices.shape[0])).T]).T
+        return np.vstack([vertices.T, np.ones(vertices.shape[0]).T])
 
-    # @property
-    # def position(self):
-    #     return Vector3(*self.T[:3,3])
+    @property
+    def position(self):
+        return Vector3(*self.T[:3,3])
 
-    # @position.setter
-    # def position(self, v):
-    #     self._translation_matrix = translation_matrix(v)
+    @position.setter
+    def position(self, v):
+        self._translation_matrix = translation_matrix(v)
+
+    @property
+    def scale(self):
+        return Vector3(*self.S[:3,3])
+
+    @scale.setter
+    def scale(self, scale):
+        self._scale_matrix = scale_matrix(Vector3(scale, scale, scale))
 
     @property
     def T(self):
-        return translation_matrix(self.position)
+        return self._translation_matrix
 
     @property
     def R(self):
@@ -81,18 +90,15 @@ class Object3D:
 
     @property
     def transformed_vertices(self):
-        return self.T * self.R * self.S * self.vertices
+        return self.T @ self.R @ self.S @ self.vertices
 
     @property
     def transformed_normals(self):
-        return self.T * self.R * self.S * self.normals
+        return self.T @ self.R @ self.S @ self.normals
 
     @property
     def transformed_centers(self):
-        return self.T * self.R * self.S * self.centers
-
-    def set_scale(self, scale):
-        self._scale_matrix = scale_matrix(Vector3(scale, scale, scale))
+        return self.T @ self.R @ self.S @ self.centers
 
     def look_at(self, target, up=None):
         """ aims camera at target, with specified up vector, or world up.
@@ -117,7 +123,7 @@ class Object3D:
 
         y_axis = -z_axis.cross(x_axis)
 
-        self._rotation_matrix = np.matrix([
+        self._rotation_matrix = np.array([
             [x_axis.x, y_axis.x, z_axis.x, 0],
             [x_axis.y, y_axis.y, z_axis.y, 0],
             [x_axis.z, y_axis.z, z_axis.z, 0],

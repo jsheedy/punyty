@@ -9,8 +9,7 @@ from punyty.renderers import TTYRenderer
 from punyty.renderers.tty_renderer import ESC, RESET, HOME
 from punyty.scene import Scene
 from punyty.vector import Vector3
-from . import benchmark
-
+from demo import benchmark
 
 BASEDIR = os.path.dirname(__file__)
 

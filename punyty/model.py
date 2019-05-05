@@ -3,16 +3,6 @@ import numpy as np
 from .object3d import Object3D
 
 
-def points_to_matrix(points):
-    """ given a sequence of points, e.g. [(x1,y1,z1), ...]
-    return them as homogenous coordinates (by adding a 4th dimension of
-    value 1) in a column order np.matrix """
-    points_matrix = np.matrix(points, dtype=np.float64).transpose()
-    omega = np.ones(len(points), dtype=np.float64)
-    points_matrix = np.matrix(np.vstack((points_matrix, omega)))
-    return points_matrix
-
-
 class Model(Object3D):
 
     @classmethod
@@ -54,17 +44,12 @@ class Model(Object3D):
                     obj.polys.append(triangle1)
                     obj.polys.append(triangle2)
 
-            # obj.vertices = points_to_matrix(vertices)
-
-            obj.vertices = np.matrix(vertices)
+            obj.vertices = np.array(vertices)
 
             if ground:
                 min_y = obj.vertices[1, :].min()
                 obj.vertices[1, :] -= min_y / 2
 
-            # centers, normals = obj.centers_and_normals()
-            # obj.normals = points_to_matrix(normals)
-            # obj.centers = points_to_matrix(centers)
             obj.__init__()
             obj.vertices = obj.to_homogenous_coords(obj.vertices)
 

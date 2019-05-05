@@ -8,7 +8,7 @@ class Tetrahedron(Object3D):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        vertices = np.matrix([
+        vertices = np.array([
             [1, 1, 1],
             [-1, -1, 1],
             [1, -1, -1],
@@ -60,7 +60,7 @@ class Cube(Object3D):
         (3, 7),
     )
 
-    vertices = np.matrix([
+    vertices = np.array([
         [1, 1, -1],
         [-1, 1, -1],
         [-1, -1, -1],
@@ -81,7 +81,7 @@ class Tetrahedron(Object3D):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        vertices = np.matrix([
+        vertices = np.array([
             [1, 1, 1],
             [-1, -1, 1],
             [1, -1, -1],
@@ -103,7 +103,7 @@ class Octahedron(Object3D):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        vertices = np.matrix([
+        vertices = np.array([
             [1, 0, 0],
             [-1, 0, 0],
             [0, 1, 0],
@@ -139,7 +139,7 @@ class Dodecahedron(Object3D):
         # https://en.wikipedia.org/wiki/Regular_dodecahedron?oldformat=true#Cartesian_coordinates
         phi = (1 + sqrt(5)) / 2
 
-        vertices = np.matrix([
+        vertices = np.array([
             # cube
             [1, 1, 1], # 0
             [1, -1, 1],

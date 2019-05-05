@@ -1,7 +1,7 @@
 import logging
 
 import numpy as np
-from skimage.draw import line_aa
+from skimage.draw import line_aa, line
 from skimage.draw import polygon
 
 from .renderer import Renderer
@@ -20,7 +20,7 @@ class ArrayRenderer(Renderer):
         self.target_array = target_array
 
     def clear(self):
-        self.target_array[::] = 0.0
+        self.target_array[...] = 0.0
 
     def draw_line(self, points, color):
         x0, y0, x1, y1 = points
@@ -34,6 +34,9 @@ class ArrayRenderer(Renderer):
         rrm = rr[mask]
         valm = val[mask]
         self.target_array[ccm, rrm] += ((np.vstack((valm, valm, valm)).T * np.array(color)))
+        # non-aa line:
+        # rr, cc = line(ix0, iy0, ix1, iy1)
+        # self.target_array[ccm, rrm] += np.array(color)
 
     def draw_poly(self, x1, y1, x2, y2, x3, y3, color):
         rows = tuple(map(lambda x: x*(self.height-1), (y1, y2, y3)))

@@ -15,7 +15,7 @@ class Camera(Object3D):
         cy = self.cy
         f = self.f
 
-        return np.matrix([
+        return np.array([
             [f, 0, cx, 0],
             [0, -f, cy, 0],
             [0, 0, 1, 0]

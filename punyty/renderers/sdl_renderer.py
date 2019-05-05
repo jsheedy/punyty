@@ -42,7 +42,7 @@ class SDLRenderer(Renderer):
 
     def draw_axes(self, scene, length=1):
 
-        axes = np.matrix([
+        axes = np.array([
             [0, 1, 0, 0],
             [0, 0, 1, 0],
             [0, 0, 0, 1],
@@ -68,12 +68,8 @@ class SDLRenderer(Renderer):
 
     def vertices_to_screen(self, scene, vertices):
         camera_matrix = scene.main_camera.matrix()
-        transformed_vertices = scene.main_camera.R.I * scene.main_camera.T.I * vertices
-        # mask = (vertices[2, :] > 0).A[0]
-        # forward_vertices = vertices[:, mask]
-        # if np.any(transformed_vertices[2, :] < 0):
-        #     return
-        points = camera_matrix * transformed_vertices
+        transformed_vertices = np.linalg.inv(scene.main_camera.R) @ np.linalg.inv(scene.main_camera.T) @ vertices
+        points = camera_matrix @ transformed_vertices
 
         # perspective
         points = points[:2, :] / points[2, :]
