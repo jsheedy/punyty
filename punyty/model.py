@@ -22,8 +22,6 @@ class Model(Object3D):
 
             vertices = []
             obj.polys = []
-            normals = []
-            centers = []
 
             for i in range(n_vertices):
                 recs = f.readline().split()
@@ -36,11 +34,11 @@ class Model(Object3D):
 
                 if p[0] == 3:  # triangles
                     triangle = p[1:]
-                    obj.polys.append(triangle)
+                    obj.polys.append(triangle[::-1])  # <-- change winding order
 
                 if p[0] == 4:  # quadrilateral
-                    triangle1 = p[1:4]
-                    triangle2 = p[3:]
+                    triangle1 = p[1:4][::-1]
+                    triangle2 = p[3:][::-1]
                     obj.polys.append(triangle1)
                     obj.polys.append(triangle2)
 
