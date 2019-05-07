@@ -85,35 +85,47 @@ class Cube(Object3D):
 
 
 class Octahedron(Object3D):
+    vertices = np.array([
+        [1, 0, 0],
+        [-1, 0, 0],
+        [0, 1, 0],
+        [0, -1, 0],
+        [0, 0, 1],
+        [0, 0, -1],
+    ], dtype=np.float64)
+
+    edges = (
+        (0, 2),
+        (0, 3),
+        (0, 4),
+        (0, 5),
+
+        (1, 2),
+        (1, 3),
+        (1, 4),
+        (1, 5),
+
+        (2, 4),
+        (2, 5),
+        (3, 4),
+        (3, 5),
+    )
+
+    polys = (
+        (2, 4, 0),
+        (2, 0, 5),
+        (2, 5, 1),
+        (2, 1, 4),
+
+        (3, 0, 4),
+        (3, 5, 0),
+        (3, 1, 5),
+        (3, 4, 1),
+    )
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        vertices = np.array([
-            [1, 0, 0],
-            [-1, 0, 0],
-            [0, 1, 0],
-            [0, -1, 0],
-            [0, 0, 1],
-            [0, 0, -1],
-        ], dtype=np.float64)
-
-        self.edges = (
-            (0, 2),
-            (0, 3),
-            (0, 4),
-            (0, 5),
-
-            (1, 2),
-            (1, 3),
-            (1, 4),
-            (1, 5),
-
-            (2, 4),
-            (2, 5),
-            (3, 4),
-            (3, 5),
-        )
-        self.vertices = self.to_homogenous_coords(vertices / 2)
+        self.vertices = self.to_homogenous_coords(self.vertices / 1.2)
 
 
 class Dodecahedron(Object3D):
