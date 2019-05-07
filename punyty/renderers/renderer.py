@@ -21,14 +21,15 @@ class Renderer():
     def postrender(self):
         pass
 
-    def draw_edges(self, points, edges):
-        edges, color = edges
-        for p1, p2 in edges:
-            x1 = points[0, p1]
-            x2 = points[0, p2]
-            y1 = points[1, p1]
-            y2 = points[1, p2]
-            self.draw_line((x1, y1, x2, y2), color)
+    def draw_edges(self, points, edges, colors):
+        for i, obj_edges in enumerate(edges):
+            color = colors[i]
+            for p1, p2 in obj_edges:
+                x1 = points[0, p1]
+                x2 = points[0, p2]
+                y1 = points[1, p1]
+                y2 = points[1, p2]
+                self.draw_line((x1, y1, x2, y2), color)
 
     def draw_vertices(self, verts):
         pass
@@ -36,7 +37,7 @@ class Renderer():
     def draw_poly(self, x1, y1, x2, y2, x3, y3, color):
         pass
 
-    def draw_polys(self, scene, normals, centers, points, polys, color=(0, 1.0, 0)):
+    def draw_polys(self, scene, normals, centers, points, polys, colors):
         light_vector = scene.main_light.direction
         light_dot_products = np.dot(light_vector, normals[:3, :])
         camera_dot_products = np.dot(scene.main_camera.position.normalize().A, normals[:3, :]) > 0.1
@@ -48,14 +49,16 @@ class Renderer():
         depth_coords.sort(reverse=True)
 
         for _, i in depth_coords:
+        # for i, poly in enumerate(polys):
             l = light_dot_products[i]
             p1, p2, p3 = polys[i]
             x1, y1 = points[0, p1], points[1, p1]
             x2, y2 = points[0, p2], points[1, p2]
             x3, y3 = points[0, p3], points[1, p3]
 
-            lighted_color = tuple(map(lambda x: x * l, color))
-            self.draw_poly(x1, y1, x2, y2, x3, y3, lighted_color)
+            lit_color = tuple(map(lambda x: x * l, colors[i]))
+            # lit_color = (0, 0 ,1)
+            self.draw_poly(x1, y1, x2, y2, x3, y3, lit_color)
 
     def render(self, scene,
                     clear=True,
@@ -73,6 +76,7 @@ class Renderer():
         centers = []
         edges = []
         polys = []
+        colors = []
         n_points = 0
         for _, obj in scene.objects.items():
             obj.update()
@@ -81,9 +85,10 @@ class Renderer():
             centers.append(obj.transformed_centers)
             if obj.edges:
                 obj_edges = [((edge[0]+n_points), (edge[1] + n_points)) for edge in obj.edges]
-                edges.extend((obj_edges, obj.color))
+                edges.append(obj_edges)
 
-            obj_polys = [((face[0]+n_points), (face[1] + n_points), (face[2] + n_points)) for face in obj.polys]
+            obj_polys = [((poly[0]+n_points), (poly[1] + n_points), (poly[2] + n_points)) for poly in obj.polys]
+            colors.extend([obj.color for _ in obj.polys])
             polys.extend(obj_polys)
 
             n_points += obj.vertices.shape[1]
@@ -95,9 +100,9 @@ class Renderer():
         points = self.vertices_to_screen(scene, vertices_matrix)
 
         if edges and draw_edges:
-            self.draw_edges(points, edges)
+            self.draw_edges(points, edges, colors)
         if draw_polys:
-            self.draw_polys(scene, normals_matrix, centers_matrix, points, polys)
+            self.draw_polys(scene, normals_matrix, centers_matrix, points, polys, colors)
         if draw_axes:
             self.draw_axes(scene)
 

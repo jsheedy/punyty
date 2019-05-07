@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 def color_to_sdl(color):
     r, g, b = color
     return 0xff000000 \
-        + (int(r * 255) << 16) \
+        + (int(b * 255) << 16) \
         + (int(g * 255) << 8) \
-        + int(b * 255)
+        + int(r * 255)
 
 
 @dataclass

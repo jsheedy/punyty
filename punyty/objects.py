@@ -5,25 +5,32 @@ from .object3d import Object3D
 
 
 class Tetrahedron(Object3D):
+    vertices = np.array([
+        [1, 1, 1],
+        [-1, -1, 1],
+        [1, -1, -1],
+        [-1, 1, -1],
+    ], dtype=np.float64)
+
+    edges = (
+        (0, 1),
+        (1, 2),
+        (2, 3),
+        (1, 3),
+        (0, 2),
+        (0, 3),
+    )
+
+    polys = (
+        (0, 1, 2),
+        (0, 2, 3),
+        (0, 3, 1),
+        (3, 2, 1)
+    )
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        vertices = np.array([
-            [1, 1, 1],
-            [-1, -1, 1],
-            [1, -1, -1],
-            [-1, 1, -1],
-        ], dtype=np.float64)
-
-        self.edges = (
-            (0, 1),
-            (1, 2),
-            (2, 3),
-            (1, 3),
-            (0, 2),
-            (0, 3),
-        )
-        self.vertices = self.to_homogenous_coords(vertices / 2)
+        self.vertices = self.to_homogenous_coords(self.vertices / 2)
 
 
 class Cube(Object3D):
