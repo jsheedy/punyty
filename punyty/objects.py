@@ -5,6 +5,7 @@ from .object3d import Object3D
 
 
 class Tetrahedron(Object3D):
+
     vertices = np.array([
         [1, 1, 1],
         [-1, -1, 1],
@@ -28,27 +29,20 @@ class Tetrahedron(Object3D):
         (3, 2, 1)
     )
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.vertices = self.to_homogenous_coords(self.vertices / 2)
-
 
 class Cube(Object3D):
 
-    polys = (
-        (0, 1, 2),
-        (2, 3, 0),
-        (4, 7, 6),
-        (6, 5, 4),
-        (1, 5, 6),
-        (6, 2, 1),
-        (0, 3, 7),
-        (7, 4, 0),
-        (3, 2, 6),
-        (6, 7, 3),
-        (5, 1, 0),
-        (0, 4, 5),
-    )
+    vertices = np.array([
+        [1, 1, -1],
+        [-1, 1, -1],
+        [-1, -1, -1],
+        [1, -1, -1],
+
+        [1, 1, 1],
+        [-1, 1, 1],
+        [-1, -1, 1],
+        [1, -1, 1]
+    ], dtype=np.float64)
 
     edges = (
         (0, 1),
@@ -67,24 +61,24 @@ class Cube(Object3D):
         (3, 7),
     )
 
-    vertices = np.array([
-        [1, 1, -1],
-        [-1, 1, -1],
-        [-1, -1, -1],
-        [1, -1, -1],
-
-        [1, 1, 1],
-        [-1, 1, 1],
-        [-1, -1, 1],
-        [1, -1, 1]
-    ], dtype=np.float64)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.vertices = self.to_homogenous_coords(self.vertices / 2)
+    polys = (
+        (0, 1, 2),
+        (2, 3, 0),
+        (4, 7, 6),
+        (6, 5, 4),
+        (1, 5, 6),
+        (6, 2, 1),
+        (0, 3, 7),
+        (7, 4, 0),
+        (3, 2, 6),
+        (6, 7, 3),
+        (5, 1, 0),
+        (0, 4, 5),
+    )
 
 
 class Octahedron(Object3D):
+
     vertices = np.array([
         [1, 0, 0],
         [-1, 0, 0],
@@ -122,10 +116,6 @@ class Octahedron(Object3D):
         (3, 1, 5),
         (3, 4, 1),
     )
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.vertices = self.to_homogenous_coords(self.vertices / 1.2)
 
 
 class Dodecahedron(Object3D):

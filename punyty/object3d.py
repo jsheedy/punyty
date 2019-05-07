@@ -26,6 +26,9 @@ class Object3D:
             self.normals = self.to_homogenous_coords(self.calculate_normals())
         if (not self.centers) and self.polys:
             self.centers = self.calculate_centers()
+        if len(self.vertices):
+            self.vertices = self.to_homogenous_coords(self.vertices / 2)
+
 
     def calculate_normals(self):
         polys = np.array(self.polys, dtype=np.uint32)
