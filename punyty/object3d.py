@@ -39,7 +39,8 @@ class Object3D:
         l1 = p1 - p0
         l2 = p2 - p1
         cross = np.cross(l2, l1, axis=1)
-        return cross / np.expand_dims(np.linalg.norm(cross, axis=1), 2)
+        n = np.linalg.norm(cross, axis=1)
+        return (cross.T/n).T
 
     def calculate_centers(self):
         polys = np.array(self.polys, dtype=np.uint32)
@@ -97,7 +98,7 @@ class Object3D:
 
     @property
     def transformed_normals(self):
-        return self.T @ self.R @ self.S @ self.normals
+        return self.R @ self.normals
 
     @property
     def transformed_centers(self):

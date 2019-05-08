@@ -40,16 +40,16 @@ class Renderer():
     def draw_polys(self, scene, normals, centers, points, polys, colors):
         light_vector = scene.main_light.direction
         light_dot_products = np.dot(light_vector, normals[:3, :])
-        camera_dot_products = np.dot(scene.main_camera.position.normalize().A, normals[:3, :]) > 0.1
+        camera_dot_products = np.dot(scene.main_camera.position.normalize().A, normals[:3, :])
 
         camera_vector = np.expand_dims(scene.main_camera.position.A, 1) - centers[:3, :]
         distance = np.linalg.norm(camera_vector, axis=0)
-        forward_polys = np.arange(len(polys), dtype=np.uint32)[camera_dot_products]
+
+        eligible_polys = (camera_dot_products > 0.0) & (light_dot_products > 0)
+        forward_polys = np.arange(len(polys), dtype=np.uint32)[eligible_polys]
         depth_coords = [(distance[i], i) for i in forward_polys]
         depth_coords.sort(reverse=True)
-
         for _, i in depth_coords:
-        # for i, poly in enumerate(polys):
             l = light_dot_products[i]
             p1, p2, p3 = polys[i]
             x1, y1 = points[0, p1], points[1, p1]
@@ -57,8 +57,8 @@ class Renderer():
             x3, y3 = points[0, p3], points[1, p3]
 
             lit_color = tuple(map(lambda x: x * l, colors[i]))
-            # lit_color = (0, 0 ,1)
             self.draw_poly(x1, y1, x2, y2, x3, y3, lit_color)
+
 
     def render(self, scene,
                     clear=True,

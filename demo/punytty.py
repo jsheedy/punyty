@@ -4,7 +4,7 @@ import sys
 import time
 
 from punyty.model import Model
-from punyty.objects import Cube
+from punyty.objects import Cube, Octahedron
 from punyty.renderers import TTYRenderer
 from punyty.renderers.tty_renderer import ESC, RESET, HOME
 from punyty.scene import Scene
@@ -55,7 +55,7 @@ def punytty():
         objects.append(bunny)
         args.polys = True
     else:
-        objects.append(Cube(color=(0, 1, 0)))
+        objects.append(Octahedron(color=(1, 1, 1)))
 
 
     renderer = TTYRenderer(status_bar=args.fps)

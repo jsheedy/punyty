@@ -6,7 +6,7 @@ from .object3d import Object3D
 class Model(Object3D):
 
     @classmethod
-    def load_ply(cls, fname, ground=True, position=None, scale=None, rotation=None):
+    def load_ply(cls, fname, position=None, scale=None, rotation=None):
 
         obj = cls(position=position, scale=scale, rotation=rotation)
 
@@ -34,7 +34,7 @@ class Model(Object3D):
 
                 if p[0] == 3:  # triangles
                     triangle = p[1:]
-                    obj.polys.append(triangle[::-1])  # <-- change winding order
+                    obj.polys.append(triangle)  # <-- change winding order
 
                 if p[0] == 4:  # quadrilateral
                     triangle1 = p[1:4][::-1]
@@ -44,11 +44,9 @@ class Model(Object3D):
 
             obj.vertices = np.array(vertices)
 
-            if ground:
-                min_y = obj.vertices[1, :].min()
-                obj.vertices[1, :] -= min_y / 2
+            # center it
+            obj.vertices -= np.mean(obj.vertices, axis=0)
 
-            obj.__init__()
-            obj.vertices = obj.to_homogenous_coords(obj.vertices)
+        obj.__init__()
 
-            return obj
+        return obj
