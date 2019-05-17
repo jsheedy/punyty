@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 import numpy as np
 
@@ -6,14 +7,17 @@ from .transformations import rotation_matrix, scale_matrix, translation_matrix
 from .vector import Vector3, ZeroVectorError
 
 
+logger = logging.getLogger(__name__)
+
+
 class Object3D:
-    vertices = ()
+    vertices = np.zeros(shape=(0,3))
     edges = ()
     polys = ()
     normals = ()
     centers = ()
 
-    def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None, color=(0, 1, 0)):
+    def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None, color=Vector3(0, 1, 0)):
         self.position = position or Vector3()
         self.update_time = datetime.now()
         self.velocity = velocity
@@ -29,6 +33,7 @@ class Object3D:
         if len(self.vertices):
             self.vertices = self.to_homogenous_coords(self.vertices / 2)
 
+        logger.warning(f'loaded {self.vertices.shape[1]} vertices, {len(self.polys)} polys')
 
     def calculate_normals(self):
         polys = np.array(self.polys, dtype=np.uint32)
@@ -45,11 +50,12 @@ class Object3D:
     def calculate_centers(self):
         polys = np.array(self.polys, dtype=np.uint32)
         poly_coords = np.array(self.vertices)[polys]
-        centers = np.mean(poly_coords, axis=2)
+        centers = np.mean(poly_coords, axis=1)
         return self.to_homogenous_coords(centers)
 
     def update(self):
-        self.update_physics()
+        pass
+        # self.update_physics()
 
     def update_physics(self):
         if not self.velocity:
@@ -109,7 +115,8 @@ class Object3D:
         Does nothing if target is coincident """
 
         if target == self.position:
-            raise Exception("can't look at self")
+            # raise Exception("can't look at self")
+            return
 
         z_axis = (target - self.position).normalize()
 

@@ -1,3 +1,5 @@
+import logging
+
 import numpy as np
 
 from .object3d import Object3D
@@ -34,18 +36,20 @@ class Model(Object3D):
 
                 if p[0] == 3:  # triangles
                     triangle = p[1:]
-                    obj.polys.append(triangle)  # <-- change winding order
+                    obj.polys.append(triangle[::-1])  # <-- change winding order
 
                 if p[0] == 4:  # quadrilateral
-                    triangle1 = p[1:4][::-1]
-                    triangle2 = p[3:][::-1]
+                    triangle1 = p[3], p[2], p[1]
+                    triangle2 = p[1], p[4], p[3]
                     obj.polys.append(triangle1)
                     obj.polys.append(triangle2)
 
             obj.vertices = np.array(vertices)
 
-            # center it
+            # center
             obj.vertices -= np.mean(obj.vertices, axis=0)
+            # scale
+            obj.vertices /= obj.vertices.max()
 
         obj.__init__()
 

@@ -50,6 +50,9 @@ class Vector3:
         """returns Vector(0,0,0)"""
         return cls(0, 0, 0)
 
+    def as_tuple(self):
+        return self.x, self.y, self.z
+
     def length(self):
         """ returns the magnitude of this vector """
         return math.sqrt(self.x**2 + self.y**2 + self.z**2)
@@ -81,3 +84,10 @@ class Vector3:
         if length == 0:
             raise ZeroVectorError("can't normalize 0 vector")
         return Vector3(self.x / length, self.y / length, self.z / length)
+
+    def lerp(self, other, t):
+        """ lerp between self and other
+        when t=0, returns self
+        when t=1 returns other
+        """
+        return self + t*(other - self)

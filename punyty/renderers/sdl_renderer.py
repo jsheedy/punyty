@@ -8,6 +8,7 @@ import sdl2.ext
 from sdl2 import sdlgfx
 
 from .renderer import Renderer
+from punyty.vector import Vector3
 
 logger = logging.getLogger(__name__)
 
@@ -34,11 +35,17 @@ class SDLRenderer(Renderer):
         self.f = f
         sdl2.ext.init()
 
-        flags = 0
+        # flags = sdl2.SDL_RENDERER_SOFTWARE
+        flags = sdl2.SDL_WINDOW_OPENGL
+        # flags = SDL_WINDOW_ALLOW_HIGHDPI
+        # flags = 0
         self.window = sdl2.ext.Window(window_title, flags=flags, size=(width, height))
+        # sdl2.SDL_SetSurfaceBlendMode(self.window.get_surface(), sdl2.SDL_BLENDMODE_BLEND)
+
         self.window.show()
         self.context = sdl2.ext.Renderer(self.window)
         self.joystick = Joystick(0, 0)
+        self.clear_color = kwargs.get('clear_color', Vector3(0,0,0))
 
     def draw_axes(self, scene, length=1):
 
@@ -91,7 +98,8 @@ class SDLRenderer(Renderer):
         sdlgfx.filledTrigonColor(self.context.sdlrenderer, x1, y1, x2, y2, x3, y3, sdl_color)
 
     def clear(self):
-        self.context.clear(0)
+        color = self.clear_color.as_tuple()
+        self.context.clear(color_to_sdl(color))
 
     def prerender(self):
         # get events or sdl window won't show

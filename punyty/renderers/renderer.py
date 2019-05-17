@@ -1,10 +1,11 @@
 import numpy as np
 
-
 class Renderer():
 
     def __init__(self, *args, **kwargs):
         self.frame = 0
+        self.max_depth = kwargs.get('max_depth', 20)
+        self.min_depth = kwargs.get('min_depth', .1)
 
     def draw_line(self, points, color):
         raise NotImplementedError
@@ -44,19 +45,19 @@ class Renderer():
 
         camera_vector = np.expand_dims(scene.main_camera.position.A, 1) - centers[:3, :]
         distance = np.linalg.norm(camera_vector, axis=0)
-
-        eligible_polys = (camera_dot_products > 0.0) & (light_dot_products > 0)
+        eligible_polys = camera_dot_products > 0.0
         forward_polys = np.arange(len(polys), dtype=np.uint32)[eligible_polys]
-        depth_coords = [(distance[i], i) for i in forward_polys]
+        depth_coords = [(distance[i], i) for i in forward_polys if distance[i] < self.max_depth and distance[i] > self.min_depth]
         depth_coords.sort(reverse=True)
-        for _, i in depth_coords:
+
+        light_dot_products = np.clip(light_dot_products, 0, 1)
+        for z, i in depth_coords:
             l = light_dot_products[i]
             p1, p2, p3 = polys[i]
             x1, y1 = points[0, p1], points[1, p1]
             x2, y2 = points[0, p2], points[1, p2]
             x3, y3 = points[0, p3], points[1, p3]
-
-            lit_color = tuple(map(lambda x: x * l, colors[i]))
+            lit_color = tuple(map(lambda x: np.clip(scene.ambient_light*x + x * l, 0, 1), colors[i]))
             self.draw_poly(x1, y1, x2, y2, x3, y3, lit_color)
 
 
@@ -88,7 +89,7 @@ class Renderer():
                 edges.append(obj_edges)
 
             obj_polys = [((poly[0]+n_points), (poly[1] + n_points), (poly[2] + n_points)) for poly in obj.polys]
-            colors.extend([obj.color for _ in obj.polys])
+            colors.extend([obj.color.as_tuple() for _ in obj.polys])
             polys.extend(obj_polys)
 
             n_points += obj.vertices.shape[1]
