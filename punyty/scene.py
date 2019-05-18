@@ -19,3 +19,7 @@ class Scene:
         name = name or f'object-{len(self.objects)}'
         self.objects[name] = obj
         return name
+
+    def update(self):
+        for _, obj in self.objects.items():
+            obj.update()

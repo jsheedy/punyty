@@ -61,6 +61,7 @@ if __name__ == '__main__':
 
     key = 1
     while True:
+        scene.update()
         scene.main_light = DirectionalLight(direction=Vector3(cos(0.2*time.time()),2, sin(0.13*time.time())).normalize())
         t = time.time() - t0
         bunny.color = Vector3(1,1,1)

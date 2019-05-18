@@ -35,6 +35,9 @@ class Renderer():
     def draw_vertices(self, verts):
         pass
 
+    def draw_centers(self, centers):
+        pass
+
     def draw_poly(self, x1, y1, x2, y2, x3, y3, color):
         pass
 
@@ -89,7 +92,6 @@ class Renderer():
         colors = []
         n_points = 0
         for _, obj in scene.objects.items():
-            obj.update()
             vertices.append(obj.transformed_vertices)
             normals.append(obj.transformed_normals)
             centers.append(obj.transformed_centers)

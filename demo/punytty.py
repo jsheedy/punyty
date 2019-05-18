@@ -57,7 +57,6 @@ def punytty():
     else:
         objects.append(Octahedron(scale=Vector3(0.5, 0.5, 0.5), color=Vector3(1, 1, 1)))
 
-
     renderer = TTYRenderer(status_bar=args.fps)
 
     for o in objects:
@@ -68,6 +67,7 @@ def punytty():
 
     while True:
         t = time.time()
+        scene.update()
         for o in objects:
             o.rotate(Vector3(-.2, 0.5*t, t/10))
         renderer.render(scene, draw_polys=args.polys, draw_edges=(not args.polys))
