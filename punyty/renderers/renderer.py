@@ -44,6 +44,19 @@ class Renderer():
     def draw_poly(self, x1, y1, x2, y2, x3, y3, color):
         pass
 
+    def draw_wireframe(self, points, polys, colors):
+
+        for i in range(len(polys)):
+            p1, p2, p3 = polys[i]
+            color = colors[i]
+            x1, y1 = points[0, p1], points[1, p1]
+            x2, y2 = points[0, p2], points[1, p2]
+            x3, y3 = points[0, p3], points[1, p3]
+            self.draw_line((x1, y1, x2, y2), color)
+            self.draw_line((x2, y2, x3, y3), color)
+            self.draw_line((x3, y3, x1, y1), color)
+
+
     def draw_polys(self, scene, normals, centers, points, polys, colors):
         forward = scene.main_camera.forward[:3]
         light_vector = scene.main_light.direction
@@ -78,6 +91,7 @@ class Renderer():
     def render(self, scene,
                     clear=True,
                     draw_edges=True,
+                    draw_wireframe=False,
                     draw_polys=False,
                     draw_axes=False,
                     draw_centers=False):
@@ -118,6 +132,9 @@ class Renderer():
             self.draw_edges(points, edges, colors)
         if draw_polys:
             self.draw_polys(scene, normals_matrix, centers_matrix, points, polys, colors)
+        if draw_wireframe:
+            self.draw_wireframe(points, polys, colors)
+
         if draw_centers:
             center_points = self.vertices_to_screen(scene, centers_matrix)
             self.draw_centers(center_points)
