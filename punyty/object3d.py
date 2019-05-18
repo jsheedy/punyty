@@ -17,7 +17,7 @@ class Object3D:
     normals = ()
     centers = ()
 
-    def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None, color=Vector3(0, 1, 0)):
+    def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None, color=Vector3(1, 1, 1)):
         self.position = position or Vector3()
         self.update_time = datetime.now()
         self.velocity = velocity

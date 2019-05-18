@@ -8,9 +8,9 @@ class DirectionalLight():
 
 
 class Scene:
-    def __init__(self, f=3.0, cx=0.5, cy=0.5, ambient_light=0.1):
+    def __init__(self, f=10, cx=0.5, cy=0.5, ambient_light=0.1):
         self.objects = dict()
-        self.main_camera = Camera(f=f, cx=cx, cy=cy, position=Vector3(0,0,-5))
+        self.main_camera = Camera(f=f, cx=cx, cy=cy, position=Vector3(0,0,-40))
         self.main_camera.look_at(Vector3(0, 0, 0))
         self.main_light = DirectionalLight(direction=Vector3(0,0,-1))
         self.ambient_light = ambient_light

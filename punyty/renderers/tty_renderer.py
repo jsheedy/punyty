@@ -24,7 +24,7 @@ class TTYRenderer(ArrayRenderer):
             self.rows = self.rows - 1
 
         self.target_array = np.zeros((self.rows, self.cols, 3))
-        super().__init__(target_array=self.target_array, **kwargs)
+        super().__init__(target_array=self.target_array, pixel_aspect=1.5, **kwargs)
 
     @lru_cache(maxsize=None)
     def pixel(self, r=0, g=255, b=0):

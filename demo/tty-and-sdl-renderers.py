@@ -11,14 +11,14 @@ if __name__ == '__main__':
     width = 800
     height = 800
     scene = Scene()
-    tetrahedron = Tetrahedron()
-    scene.add_object(tetrahedron)
+    cube = Cube()
+    scene.add_object(cube)
     tty_renderer = TTYRenderer()
     sdl_renderer = SDLRenderer(width=width, height=height)
 
     while True:
         t = time.time()
-        tetrahedron.rotate(Vector3(t, 0, 0))
+        cube.rotate(Vector3(t, t, t))
         scene.update()
-        tty_renderer.render(scene)
-        sdl_renderer.render(scene)
+        tty_renderer.render(scene, draw_edges=False, draw_polys=True)
+        sdl_renderer.render(scene, draw_edges=False, draw_polys=True)

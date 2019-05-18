@@ -2,10 +2,13 @@ import numpy as np
 
 class Renderer():
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, pixel_aspect=1.0, **kwargs):
         self.frame = 0
-        self.max_depth = kwargs.get('max_depth', 20)
+        self.max_depth = kwargs.get('max_depth', 50)
         self.min_depth = kwargs.get('min_depth', .1)
+        self.width = 1
+        self.height = 1
+        self.pixel_aspect = pixel_aspect
 
     def draw_line(self, points, color):
         raise NotImplementedError
@@ -77,7 +80,7 @@ class Renderer():
                     draw_edges=True,
                     draw_polys=False,
                     draw_axes=False,
-                    draw_centers=True):
+                    draw_centers=False):
 
         self.prerender()
         if clear:
@@ -125,7 +128,15 @@ class Renderer():
 
     def vertices_to_screen(self, scene, vertices):
         transformed_vertices = np.linalg.inv(scene.main_camera.R) @ np.linalg.inv(scene.main_camera.T) @ vertices
-        points = scene.main_camera.matrix() @ transformed_vertices
         # perspective
-        points = points[:2, :] / points[2, :]
-        return points
+        transformed_vertices[:3, :] /= transformed_vertices[2, :]
+
+        camera_points = scene.main_camera.matrix() @ transformed_vertices
+        camera_points2d = camera_points[:2, :]
+        scale = min(self.width, self.height) * self.pixel_aspect
+        xscale = scale * self.pixel_aspect
+        yscale = scale * (1/self.pixel_aspect)
+        camera_points2d[0, :] = camera_points2d[0, :]*xscale + (self.width-xscale)/2
+        camera_points2d[1, :] = camera_points2d[1, :]*yscale + (self.height-yscale)/2
+        points_int = camera_points2d.astype(np.int32)
+        return points_int

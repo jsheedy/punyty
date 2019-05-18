@@ -28,20 +28,17 @@ class Joystick():
 
 
 class SDLRenderer(Renderer):
-    def __init__(self, width=800, height=600, f=2000, window_title="punyty", **kwargs):
+    def __init__(self, width=800, height=600, window_title="punyty", **kwargs):
         super().__init__(**kwargs)
         self.width = width
         self.height = height
-        self.f = f
         sdl2.ext.init()
 
         # flags = sdl2.SDL_RENDERER_SOFTWARE
         flags = sdl2.SDL_WINDOW_OPENGL
         # flags = SDL_WINDOW_ALLOW_HIGHDPI
-        # flags = 0
-        self.window = sdl2.ext.Window(window_title, flags=flags, size=(width, height))
-        # sdl2.SDL_SetSurfaceBlendMode(self.window.get_surface(), sdl2.SDL_BLENDMODE_BLEND)
 
+        self.window = sdl2.ext.Window(window_title, flags=flags, size=(width, height))
         self.window.show()
         self.context = sdl2.ext.Renderer(self.window)
         self.joystick = Joystick(0, 0)
@@ -58,10 +55,7 @@ class SDLRenderer(Renderer):
 
         axes[:3, :] *= length
 
-        points = [tuple(x) for x in self.vertices_to_screen(scene, axes).T.A]
-
-        if len(points) < 4:
-            return
+        points = [tuple(x) for x in self.vertices_to_screen(scene, axes).T]
 
         # each axis is (color, endpoints)
         lines = (
@@ -72,20 +66,6 @@ class SDLRenderer(Renderer):
 
         for color, p1, p2 in lines:
             sdlgfx.aalineColor(self.context.sdlrenderer, p1[0], p1[1], p2[0], p2[1], color)
-
-    def vertices_to_screen(self, scene, vertices):
-        camera_matrix = scene.main_camera.matrix()
-        transformed_vertices = np.linalg.inv(scene.main_camera.R) @ np.linalg.inv(scene.main_camera.T) @ vertices
-        points = camera_matrix @ transformed_vertices
-
-        # perspective
-        points = points[:2, :] / points[2, :]
-
-        points_int = points.round().astype(np.int32)
-        return points_int
-
-    def combine_vertices(self, vertices):
-        pass
 
     def draw_line(self, points, color):
         x1, y1, x2, y2 = points

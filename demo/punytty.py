@@ -55,7 +55,7 @@ def punytty():
         objects.append(bunny)
         args.polys = True
     else:
-        objects.append(Octahedron(scale=Vector3(0.5, 0.5, 0.5), color=Vector3(1, 1, 1)))
+        objects.append(Octahedron(color=Vector3(1, 1, 1)))
 
     renderer = TTYRenderer(status_bar=args.fps)
 
@@ -70,6 +70,7 @@ def punytty():
         scene.update()
         for o in objects:
             o.rotate(Vector3(-.2, 0.5*t, t/10))
+
         renderer.render(scene, draw_polys=args.polys, draw_edges=(not args.polys))
 
         if args.fps:

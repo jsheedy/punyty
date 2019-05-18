@@ -23,12 +23,7 @@ class ArrayRenderer(Renderer):
         self.target_array[...] = 0.0
 
     def draw_line(self, points, color):
-        x0, y0, x1, y1 = points
-        ix0 = int(x0 * (self.width-1))
-        iy0 = int(y0 * (self.height-1))
-        ix1 = int(x1 * (self.width-1))
-        iy1 = int(y1 * (self.height-1))
-        rr, cc, val = line_aa(ix0, iy0, ix1, iy1)
+        rr, cc, val = line_aa(*points)
         mask = (rr >= 0) & (rr < self.width) & (cc >= 0) & (cc < self.height)
         ccm = cc[mask]
         rrm = rr[mask]
@@ -39,9 +34,8 @@ class ArrayRenderer(Renderer):
         # self.target_array[ccm, rrm] += np.array(color)
 
     def draw_poly(self, x1, y1, x2, y2, x3, y3, color):
-        rows = tuple(map(lambda x: x*(self.height-1), (y1, y2, y3)))
-        cols = tuple(map(lambda x: x*(self.width-1), (x1, x2, x3)))
-
+        rows = y1, y2, y3
+        cols = x1, x2, x3
         rr, cc = polygon(cols, rows)
         mask = (rr >= 0) & (rr < self.width) & (cc >= 0) & (cc < self.height)
         ccm = cc[mask]
