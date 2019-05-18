@@ -31,9 +31,9 @@ class Object3D:
         if (not self.centers) and self.polys:
             self.centers = self.calculate_centers()
         if len(self.vertices):
-            self.vertices = self.to_homogenous_coords(self.vertices / 2)
+            self.vertices = self.to_homogenous_coords(self.vertices)
 
-        logger.warning(f'loaded {self.vertices.shape[1]} vertices, {len(self.polys)} polys')
+        logger.debug(f'loaded {self.vertices.shape[1]} vertices, {len(self.polys)} polys')
 
     def calculate_normals(self):
         polys = np.array(self.polys, dtype=np.uint32)
@@ -109,6 +109,10 @@ class Object3D:
     @property
     def transformed_centers(self):
         return self.T @ self.R @ self.S @ self.centers
+
+    @property
+    def forward(self):
+        return self.R @ np.array((0, 0, 1, 1))
 
     def look_at(self, target, up=None):
         """ aims camera at target, with specified up vector, or world up.

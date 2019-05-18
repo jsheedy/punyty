@@ -39,18 +39,26 @@ class Renderer():
         pass
 
     def draw_polys(self, scene, normals, centers, points, polys, colors):
+        forward = scene.main_camera.forward[:3]
         light_vector = scene.main_light.direction
-        light_dot_products = np.dot(light_vector, normals[:3, :])
-        camera_dot_products = np.dot(scene.main_camera.position.normalize().A, normals[:3, :])
+        light_dot_products = np.clip(np.dot(light_vector, normals[:3, :]), 0, 1)
 
-        camera_vector = np.expand_dims(scene.main_camera.position.A, 1) - centers[:3, :]
+        camera_vector = centers[:3, :] - np.expand_dims(scene.main_camera.position.A, 1)
         distance = np.linalg.norm(camera_vector, axis=0)
-        eligible_polys = camera_dot_products > 0.0
-        forward_polys = np.arange(len(polys), dtype=np.uint32)[eligible_polys]
-        depth_coords = [(distance[i], i) for i in forward_polys if distance[i] < self.max_depth and distance[i] > self.min_depth]
+        camera_normals = camera_vector / distance
+        camera_dot_products = np.dot(forward, camera_normals)
+
+        cone_of_vision_mask = camera_dot_products > 0.95  # 0.95 is sweet spot for sdl renderer #self.joystick.x
+        distance_mask = (distance < self.max_depth) & (distance > self.min_depth)
+        front_facing_mask = np.dot(-1*forward, normals[:3, :]) > 0
+        # poly_mask = cone_of_vision_mask
+        # poly_mask = distance_mask
+        # poly_mask = front_facing_mask
+        poly_mask = distance_mask & cone_of_vision_mask & front_facing_mask
+        eligible_polys = np.where(poly_mask)[0]
+        depth_coords = [(distance[i], i) for i in eligible_polys]
         depth_coords.sort(reverse=True)
 
-        light_dot_products = np.clip(light_dot_products, 0, 1)
         for z, i in depth_coords:
             l = light_dot_products[i]
             p1, p2, p3 = polys[i]
@@ -65,7 +73,8 @@ class Renderer():
                     clear=True,
                     draw_edges=True,
                     draw_polys=False,
-                    draw_axes=False):
+                    draw_axes=False,
+                    draw_centers=True):
 
         self.prerender()
         if clear:
@@ -104,6 +113,9 @@ class Renderer():
             self.draw_edges(points, edges, colors)
         if draw_polys:
             self.draw_polys(scene, normals_matrix, centers_matrix, points, polys, colors)
+        if draw_centers:
+            center_points = self.vertices_to_screen(scene, centers_matrix)
+            self.draw_centers(center_points)
         if draw_axes:
             self.draw_axes(scene)
 

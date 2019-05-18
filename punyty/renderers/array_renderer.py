@@ -46,4 +46,4 @@ class ArrayRenderer(Renderer):
         mask = (rr >= 0) & (rr < self.width) & (cc >= 0) & (cc < self.height)
         ccm = cc[mask]
         rrm = rr[mask]
-        self.target_array[ccm, rrm] += color
+        self.target_array[ccm, rrm] = color

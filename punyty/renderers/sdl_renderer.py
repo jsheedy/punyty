@@ -97,6 +97,14 @@ class SDLRenderer(Renderer):
         sdl_color = color_to_sdl(color)
         sdlgfx.filledTrigonColor(self.context.sdlrenderer, x1, y1, x2, y2, x3, y3, sdl_color)
 
+    def draw_centers(self, centers):
+        color = color_to_sdl((1,1,1))
+        radius = int(self.joystick.y*20)
+        for i in range(centers.shape[1]):
+            x = centers[0, i]
+            y = centers[1, i]
+            sdlgfx.circleColor(self.context.sdlrenderer, x, y, radius, color)
+
     def clear(self):
         color = self.clear_color.as_tuple()
         self.context.clear(color_to_sdl(color))

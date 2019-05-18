@@ -51,11 +51,11 @@ def punytty():
     if args.bunny:
         path = os.path.join(BASEDIR, '../models/bunny.ply')
         bunny = Model.load_ply(path)
-        bunny.position = Vector3(.02,-.12,-4.5)
+        bunny.position = Vector3(0,0,0)
         objects.append(bunny)
         args.polys = True
     else:
-        objects.append(Octahedron(color=(1, 1, 1)))
+        objects.append(Octahedron(scale=Vector3(0.5, 0.5, 0.5), color=Vector3(1, 1, 1)))
 
 
     renderer = TTYRenderer(status_bar=args.fps)
