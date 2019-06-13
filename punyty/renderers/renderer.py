@@ -1,14 +1,36 @@
 import numpy as np
 
+from punyty.scene import DirectionalLight, PointLight, AmbientLight
+
+
 class Renderer():
 
-    def __init__(self, *args, pixel_aspect=1.0, **kwargs):
+    def __init__(
+        self,
+        *args,
+        pixel_aspect=1.0,
+        max_depth=1000,
+        min_depth=0.1,
+        clear=True,
+        draw_edges=True,
+        draw_wireframe=False,
+        draw_polys=True,
+        draw_axes=False,
+        draw_centers=False,
+        **kwargs):
+
         self.frame = 0
-        self.max_depth = kwargs.get('max_depth', 50)
-        self.min_depth = kwargs.get('min_depth', .1)
+        self.max_depth = max_depth
+        self.min_depth = min_depth
         self.width = 1
         self.height = 1
         self.pixel_aspect = pixel_aspect
+        self._clear = clear
+        self._draw_edges = draw_edges
+        self._draw_wireframe = draw_wireframe
+        self._draw_polys = draw_polys
+        self._draw_axes = draw_axes
+        self._draw_centers = draw_centers
 
     def draw_line(self, points, color):
         raise NotImplementedError
@@ -46,8 +68,8 @@ class Renderer():
 
     def draw_wireframe(self, points, polys, colors):
 
-        for i in range(len(polys)):
-            p1, p2, p3 = polys[i]
+        for i, (p1, p2, p3) in enumerate(polys):
+            # p1, p2, p3 = polys[i]
             color = colors[i]
             x1, y1 = points[0, p1], points[1, p1]
             x2, y2 = points[0, p2], points[1, p2]
@@ -56,11 +78,8 @@ class Renderer():
             self.draw_line((x2, y2, x3, y3), color)
             self.draw_line((x3, y3, x1, y1), color)
 
-
     def draw_polys(self, scene, normals, centers, points, polys, colors):
         forward = scene.main_camera.forward[:3]
-        light_vector = scene.main_light.direction
-        light_dot_products = np.clip(np.dot(light_vector, normals[:3, :]), 0, 1)
 
         camera_vector = centers[:3, :] - np.expand_dims(scene.main_camera.position.A, 1)
         distance = np.linalg.norm(camera_vector, axis=0)
@@ -78,26 +97,44 @@ class Renderer():
         depth_coords = [(distance[i], i) for i in eligible_polys]
         depth_coords.sort(reverse=True)
 
+        def light_components():
+
+            for light in scene.lights:
+
+                if isinstance(light, DirectionalLight):
+                    light_dot_products = np.dot(light.direction, normals[:3, :])
+                    intensities = np.clip(light_dot_products, 0, 1)
+
+                elif isinstance(light, PointLight):
+                    point_light_vector = centers[:3, :] - np.expand_dims(light.position.A, 1)
+                    d = np.linalg.norm(point_light_vector, axis=0)
+                    point_light_normals = point_light_vector / d
+                    # https://stackoverflow.com/questions/14758283/is-there-a-numpy-scipy-dot-product-calculating-only-the-diagonal-entries-of-the
+                    point_light_dot_products = (point_light_normals * normals[:3, :]).sum(axis=0)
+                    intensities = np.clip(point_light_dot_products, 0, 1)
+
+                elif isinstance(light, AmbientLight):
+                    repeats = len(polys)
+                    intensities = np.repeat(light.intensity, repeats)
+
+                yield intensities
+
+        lighting = np.vstack(light_components()).sum(axis=0)
+
         for z, i in depth_coords:
-            l = light_dot_products[i]
+            l = lighting[i]
             p1, p2, p3 = polys[i]
             x1, y1 = points[0, p1], points[1, p1]
             x2, y2 = points[0, p2], points[1, p2]
             x3, y3 = points[0, p3], points[1, p3]
-            lit_color = tuple(map(lambda x: np.clip(scene.ambient_light*x + x * l, 0, 1), colors[i]))
+            lit_color = tuple(map(lambda x: np.clip(l * x, 0, 1), colors[i]))
             self.draw_poly(x1, y1, x2, y2, x3, y3, lit_color)
 
 
-    def render(self, scene,
-                    clear=True,
-                    draw_edges=True,
-                    draw_wireframe=False,
-                    draw_polys=False,
-                    draw_axes=False,
-                    draw_centers=False):
+    def render(self, scene):
 
         self.prerender()
-        if clear:
+        if self._clear:
             self.clear()
         self.frame += 1
 
@@ -128,17 +165,17 @@ class Renderer():
 
         points = self.vertices_to_screen(scene, vertices_matrix)
 
-        if edges and draw_edges:
+        if edges and self._draw_edges:
             self.draw_edges(points, edges, colors)
-        if draw_polys:
+        if self._draw_polys:
             self.draw_polys(scene, normals_matrix, centers_matrix, points, polys, colors)
-        if draw_wireframe:
+        if self._draw_wireframe:
             self.draw_wireframe(points, polys, colors)
 
-        if draw_centers:
+        if self._draw_centers:
             center_points = self.vertices_to_screen(scene, centers_matrix)
             self.draw_centers(center_points)
-        if draw_axes:
+        if self._draw_axes:
             self.draw_axes(scene)
 
         self.postrender()

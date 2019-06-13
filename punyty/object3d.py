@@ -17,23 +17,21 @@ class Object3D:
     normals = ()
     centers = ()
 
-    def __init__(self, position=None, angular_velocity=None, velocity=None, scale=None, rotation=None, color=Vector3(1, 1, 1)):
-        self.position = position or Vector3()
+    def __init__(self, position=Vector3(), angular_velocity=None, velocity=None, scale=None, rotation=None, color=Vector3(1, 1, 1)):
+        self.position = position
         self.update_time = datetime.now()
         self.velocity = velocity
         self.angular_velocity = angular_velocity
-        self._translation_matrix = translation_matrix(position or Vector3.zero())
+        self._translation_matrix = translation_matrix(self.position)
         self._scale_matrix = scale_matrix(scale or Vector3.unity())
         self._rotation_matrix = rotation_matrix(rotation)
         self.color = color
         if (not self.normals) and self.polys:
-            self.normals = self.to_homogenous_coords(self.calculate_normals())
+            self.normals = self.calculate_normals()
         if (not self.centers) and self.polys:
             self.centers = self.calculate_centers()
-        if len(self.vertices):
-            self.vertices = self.to_homogenous_coords(self.vertices)
 
-        logger.debug(f'loaded {self.vertices.shape[1]} vertices, {len(self.polys)} polys')
+        self.vertices = self.to_homogenous_coords(self.vertices)
 
     def calculate_normals(self):
         polys = np.array(self.polys, dtype=np.uint32)
@@ -45,7 +43,8 @@ class Object3D:
         l2 = p2 - p1
         cross = np.cross(l2, l1, axis=1)
         n = np.linalg.norm(cross, axis=1)
-        return (cross.T/n).T
+        normals = (cross.T/n).T
+        return self.to_homogenous_coords(normals)
 
     def calculate_centers(self):
         polys = np.array(self.polys, dtype=np.uint32)

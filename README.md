@@ -9,6 +9,8 @@ different renderers:
  - ArrayRenderer - renders scene to a numpy array
  - TTYRenderer - renders output of ArrayRenderer to ANSI escape codes for TTY display
 
+Polygon winding is left-handed.
+
 ## Install
 
 ```

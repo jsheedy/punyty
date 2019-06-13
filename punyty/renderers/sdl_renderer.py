@@ -28,15 +28,16 @@ class Joystick():
 
 
 class SDLRenderer(Renderer):
-    def __init__(self, width=800, height=600, window_title="punyty", **kwargs):
+    def __init__(self, width=800, height=600, window_title="punyty", opengl=True, **kwargs):
         super().__init__(**kwargs)
         self.width = width
         self.height = height
         sdl2.ext.init()
 
-        # flags = sdl2.SDL_RENDERER_SOFTWARE
-        flags = sdl2.SDL_WINDOW_OPENGL
-        # flags = SDL_WINDOW_ALLOW_HIGHDPI
+        if opengl:
+            flags = sdl2.SDL_WINDOW_OPENGL
+        else:
+            flags = sdl2.SDL_RENDERER_SOFTWARE
 
         self.window = sdl2.ext.Window(window_title, flags=flags, size=(width, height))
         self.window.show()
@@ -86,8 +87,9 @@ class SDLRenderer(Renderer):
             sdlgfx.circleColor(self.context.sdlrenderer, x, y, radius, color)
 
     def clear(self):
-        color = self.clear_color.as_tuple()
-        self.context.clear(color_to_sdl(color))
+        # color = self.clear_color.as_tuple()
+        self.context.clear()
+        # self.context.clear(color_to_sdl(color))
 
     def prerender(self):
         # get events or sdl window won't show
@@ -104,8 +106,19 @@ class SDLRenderer(Renderer):
         events = sdl2.ext.get_events()
         for event in events:
             if event.type == sdl2.SDL_KEYDOWN:
+                logger.info(event.key.keysym.sym)
                 if event.key.keysym.sym == 113:  # q
                     raise Exception('user quit')
+                elif event.key.keysym.sym == 102: # f
+                    self._clear = not self._clear
+                elif event.key.keysym.sym == 112: # p
+                    self._draw_polys = not self._draw_polys
+                elif event.key.keysym.sym == 119: # w
+                    self._draw_wireframe = not self._draw_wireframe
+                elif event.key.keysym.sym == 101: # e
+                    self._draw_edges = not self._draw_edges
+                elif event.key.keysym.sym == 97: # a
+                    self._draw_axes = not self._draw_axes
 
             elif event.type == sdl2.SDL_MOUSEMOTION:
                 x, y = ctypes.c_int(0), ctypes.c_int(0) # Create two ctypes values
@@ -115,3 +128,6 @@ class SDLRenderer(Renderer):
 
             elif event.type == sdl2.SDL_QUIT:
                 raise Exception('user quit')
+
+            else:
+                logger.info(f'unhandled key {event.key.keysym.sym}')
