@@ -6,18 +6,18 @@ from punyty.scene import DirectionalLight, PointLight, AmbientLight
 class Renderer():
 
     def __init__(
-        self,
-        *args,
-        pixel_aspect=1.0,
-        max_depth=1000,
-        min_depth=0.1,
-        clear=True,
-        draw_edges=True,
-        draw_wireframe=False,
-        draw_polys=True,
-        draw_axes=False,
-        draw_centers=False,
-        **kwargs):
+            self,
+            *args,
+            pixel_aspect=1.0,
+            max_depth=1000,
+            min_depth=0.1,
+            clear=True,
+            draw_edges=True,
+            draw_wireframe=False,
+            draw_polys=True,
+            draw_axes=False,
+            draw_centers=False,
+            **kwargs):
 
         self.frame = 0
         self.max_depth = max_depth
@@ -129,7 +129,6 @@ class Renderer():
             x3, y3 = points[0, p3], points[1, p3]
             lit_color = tuple(map(lambda x: np.clip(l * x, 0, 1), colors[i]))
             self.draw_poly(x1, y1, x2, y2, x3, y3, lit_color)
-
 
     def render(self, scene):
 
