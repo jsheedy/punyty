@@ -19,13 +19,13 @@ class AmbientLight():
 
 
 class Scene:
-    def __init__(self, f=10, cx=0.5, cy=0.5):
+    def __init__(self, f=3, cx=0.5, cy=0.5):
         self.objects = dict()
-        self.main_camera = Camera(f=f, cx=cx, cy=cy, position=Vector3(0,0,-15))
+        self.main_camera = Camera(f=f, cx=cx, cy=cy, position=Vector3(0,0,-10))
         self.main_camera.look_at(Vector3(0, 0, 0))
         self.lights = [
             DirectionalLight(direction=Vector3(1,-1,0)),
-            AmbientLight(intensity=0.1),
+            AmbientLight(intensity=0.3),
         ]
 
     def add_object(self, obj, name=None):

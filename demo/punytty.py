@@ -25,13 +25,13 @@ def parse_args():
     parser.add_argument(
         '--polys',
         action='store_true',
-        default=False,
+        default=True,
         help='draw poly faces'
     )
     parser.add_argument(
         '--edges',
         action='store_true',
-        default=True,
+        default=False,
         help='draw vertex edges'
     )
     parser.add_argument(
@@ -55,7 +55,7 @@ def punytty():
         objects.append(bunny)
         args.polys = True
     else:
-        objects.append(Octahedron(color=Vector3(1, 1, 1)))
+        objects.append(Cube(color=Vector3(.1, 1, .2)))
 
     renderer = TTYRenderer(
         status_bar=args.fps,
