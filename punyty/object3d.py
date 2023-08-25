@@ -11,13 +11,21 @@ logger = logging.getLogger(__name__)
 
 
 class Object3D:
-    vertices = np.zeros(shape=(0,3))
+    vertices = np.zeros(shape=(0, 3))
     edges = ()
     polys = ()
     normals = ()
     centers = ()
 
-    def __init__(self, position=Vector3(), angular_velocity=None, velocity=None, scale=None, rotation=None, color=Vector3(1, 1, 1)):
+    def __init__(
+        self,
+        position=Vector3(),
+        angular_velocity=None,
+        velocity=None,
+        scale=None,
+        rotation=None,
+        color=Vector3(1, 1, 1),
+    ):
         self.position = position
         self.update_time = datetime.now()
         self.velocity = velocity
@@ -43,7 +51,7 @@ class Object3D:
         l2 = p2 - p1
         cross = np.cross(l2, l1, axis=1)
         n = np.linalg.norm(cross, axis=1)
-        normals = (cross.T/n).T
+        normals = (cross.T / n).T
         return self.to_homogenous_coords(normals)
 
     def calculate_centers(self):
@@ -114,8 +122,8 @@ class Object3D:
         return self.R @ np.array((0, 0, 1, 1))
 
     def look_at(self, target, up=None):
-        """ aims camera at target, with specified up vector, or world up.
-        Does nothing if target is coincident """
+        """aims camera at target, with specified up vector, or world up.
+        Does nothing if target is coincident"""
 
         if target == self.position:
             # raise Exception("can't look at self")
@@ -136,12 +144,15 @@ class Object3D:
 
         y_axis = -z_axis.cross(x_axis)
 
-        self._rotation_matrix = np.array([
-            [x_axis.x, y_axis.x, z_axis.x, 0],
-            [x_axis.y, y_axis.y, z_axis.y, 0],
-            [x_axis.z, y_axis.z, z_axis.z, 0],
-            [0, 0, 0, 1]
-        ], dtype=np.float64)
+        self._rotation_matrix = np.array(
+            [
+                [x_axis.x, y_axis.x, z_axis.x, 0],
+                [x_axis.y, y_axis.y, z_axis.y, 0],
+                [x_axis.z, y_axis.z, z_axis.z, 0],
+                [0, 0, 0, 1],
+            ],
+            dtype=np.float64,
+        )
 
     def rotate(self, vector):
         self._rotation_matrix = rotation_matrix(vector)

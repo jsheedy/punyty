@@ -1,19 +1,14 @@
-import logging
-
 import numpy as np
 
 from .object3d import Object3D
 
 
 class Model(Object3D):
-
     @classmethod
     def load_ply(cls, fname, position=None, scale=None, rotation=None):
-
         obj = cls(position=position, scale=scale, rotation=rotation)
 
         with open(fname) as f:
-
             for line in (x.strip() for x in f):
                 if line == "end_header":
                     break

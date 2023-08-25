@@ -15,8 +15,4 @@ class Camera(Object3D):
         cy = self.cy
         f = self.f
 
-        return np.array([
-            [f,  0, cx, 0],
-            [0, -f, cy, 0],
-            [0,  0,  1, 0]
-        ], dtype=np.float64)
+        return np.array([[f, 0, cx, 0], [0, -f, cy, 0], [0, 0, 1, 0]], dtype=np.float64)

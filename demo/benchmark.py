@@ -1,7 +1,7 @@
 import time
 
 
-class Benchmark():
+class Benchmark:
     def __init__(self, renderer, n_frames=30):
         self.renderer = renderer
         self.t0 = time.time()
@@ -12,4 +12,4 @@ class Benchmark():
             dt = t - self.t0
             self.t0 = t
             fps = self.n_frames / dt
-            return f'fps: {fps:.2f}'
+            return f"fps: {fps:.2f}"

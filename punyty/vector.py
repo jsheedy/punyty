@@ -2,11 +2,12 @@ import math
 
 import numpy as np
 
-class ZeroVectorError(Exception): pass
+
+class ZeroVectorError(Exception):
+    pass
 
 
 class Vector3:
-
     def __init__(self, x=0, y=0, z=0):
         self.x = x
         self.y = y
@@ -14,18 +15,14 @@ class Vector3:
 
     @classmethod
     def unity(cls):
-        return cls(1,1,1)
+        return cls(1, 1, 1)
 
     @property
     def A(self):
         return np.array((self.x, self.y, self.z))
 
     def __add__(self, other):
-        return Vector3(
-            self.x + other.x,
-            self.y + other.y,
-            self.z + other.z
-        )
+        return Vector3(self.x + other.x, self.y + other.y, self.z + other.z)
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y and self.z == other.z
@@ -54,30 +51,28 @@ class Vector3:
         return self.x, self.y, self.z
 
     def length(self):
-        """ returns the magnitude of this vector """
+        """returns the magnitude of this vector"""
         return math.sqrt(self.x**2 + self.y**2 + self.z**2)
 
     def dot(self, other):
         return self.x * other.x + self.y * other.y + self.z * other.z
 
     def cross(self, other):
-        """ cross product for left handed coordinate system """
+        """cross product for left handed coordinate system"""
         a = self
         b = other
         return -1 * Vector3(
-            a.y * b.z - a.z * b.y,
-            a.z * b.x - a.x * b.z,
-            a.x * b.y - a.y * b.x
+            a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x
         )
 
     def angle_between(self, other):
-        """ returns the angle between this vector and other """
+        """returns the angle between this vector and other"""
         dot = self.normalize().dot(other.normalize())
         angle = math.acos(dot)  # / (self.length() * other.length()))
         return angle
 
     def normalize(self):
-        """ returns a vector in the same direction with unit length
+        """returns a vector in the same direction with unit length
         In the degenerate case of a zero vector, raises"""
 
         length = self.length()
@@ -86,8 +81,8 @@ class Vector3:
         return Vector3(self.x / length, self.y / length, self.z / length)
 
     def lerp(self, other, t):
-        """ lerp between self and other
+        """lerp between self and other
         when t=0, returns self
         when t=1 returns other
         """
-        return self + t*(other - self)
+        return self + t * (other - self)

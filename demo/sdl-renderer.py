@@ -6,7 +6,7 @@ from punyty.renderers import SDLRenderer
 from punyty.scene import Scene
 import benchmark
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     width = 1280
     height = 720
 

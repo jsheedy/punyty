@@ -13,7 +13,7 @@ from punyty.scene import Scene
 import benchmark
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     width = 800
     height = 800
     target_array = np.zeros((height, width, 3))

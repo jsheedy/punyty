@@ -1,7 +1,7 @@
 import logging
 
 import numpy as np
-from skimage.draw import line_aa, line
+from skimage.draw import line_aa
 from skimage.draw import polygon
 
 from .renderer import Renderer
@@ -10,9 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 class ArrayRenderer(Renderer):
-    """ renders to a numpy array """
+    """renders to a numpy array"""
 
-    def __init__(self,  *args, target_array=None, **kwargs):
+    def __init__(self, *args, target_array=None, **kwargs):
         super().__init__(*args, **kwargs)
         h, w = target_array.shape[:2]
         self.width = w
@@ -28,7 +28,7 @@ class ArrayRenderer(Renderer):
         ccm = cc[mask]
         rrm = rr[mask]
         valm = val[mask]
-        self.target_array[ccm, rrm] += ((np.vstack((valm, valm, valm)).T * np.array(color)))
+        self.target_array[ccm, rrm] += np.vstack((valm, valm, valm)).T * np.array(color)
         # non-aa line:
         # rr, cc = line(ix0, iy0, ix1, iy1)
         # self.target_array[ccm, rrm] += np.array(color)
