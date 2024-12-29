@@ -119,7 +119,7 @@ class Renderer():
 
                 yield intensities
 
-        lighting = np.vstack(light_components()).sum(axis=0)
+        lighting = np.vstack(tuple(light_components())).sum(axis=0)
 
         for z, i in depth_coords:
             l = lighting[i]

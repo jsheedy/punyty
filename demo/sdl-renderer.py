@@ -2,7 +2,7 @@ import time
 
 from punyty.vector import Vector3
 from punyty.objects import Cube
-from punyty.renderers import SDLRenderer
+from punyty.renderers.sdl_renderer import SDLRenderer
 from punyty.scene import Scene
 import benchmark
 
@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
         cube.rotate(Vector3(t, t, t))
 
-        renderer.render(scene, draw_edges=False, draw_polys=True)
+        renderer.render(scene)
 
         fps = bench.update(t)
         if fps:
