@@ -6,7 +6,7 @@ import time
 from punyty.vector import Vector3
 from punyty.objects import Cube, Tetrahedron, Octahedron
 from punyty.model import Model
-from punyty.renderers import SDLRenderer
+from punyty.renderers.sdl_renderer import SDLRenderer
 from punyty.scene import Scene, DirectionalLight
 import benchmark
 
@@ -31,8 +31,8 @@ if __name__ == '__main__':
     )
     # for cube in cubes:
     #     scene.add_object(cube)
-    # bunny = Model.load_ply('models/bunny.ply')
-    bunny = Model.load_ply('/Users/velotron/assets/stegs-low-poly.ply')
+    bunny = Model.load_ply('punyty/models/bunny.ply')
+    # bunny = Model.load_ply('/Users/velotron/assets/stegs-low-poly.ply')
     bunny.color = Vector3(1,.5,.75)
     bunny.rotate(Vector3(0,1.1, 0))
     # bunny = Model.load_ply('/Users/velotron/assets/velotron_arise_eecc.ply')
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         # for cube in cubes:
         #     cube.rotate(Vector3(t, t, 0))
 
-        renderer.render(scene, draw_edges=False, draw_polys=True, draw_axes=False)
+        renderer.render(scene)
         fps = bench.update(t)
         if fps:
             print(fps)
