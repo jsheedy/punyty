@@ -22,11 +22,25 @@ class TTYRenderer(ArrayRenderer):
             self.rows = self.rows - 1
 
         self.target_array = np.zeros((self.rows, self.cols, 3), dtype=np.float32)
+        self.int_to_bytes_map = {
+            i: str(i).encode('utf8')
+            for i in range(256)
+        }
         super().__init__(target_array=self.target_array, pixel_aspect=1.5, **kwargs)
 
 
     def pixel(self, color):
-        return ESC + RGB_MODE + f'{color[0]};{color[1]};{color[2]}'.encode('utf8') + b'm' + BLOCK
+        return (
+            ESC
+            + RGB_MODE
+            + self.int_to_bytes_map[color[0]]
+            + b';'
+            + self.int_to_bytes_map[color[1]]
+            + b';'
+            + self.int_to_bytes_map[color[2]]
+            + b'm'
+            + BLOCK
+        )
 
 
     def postrender(self):
