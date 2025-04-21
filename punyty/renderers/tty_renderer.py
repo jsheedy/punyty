@@ -1,4 +1,4 @@
-from functools import lru_cache
+from functools import cache
 import logging
 import shutil
 import sys
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 ESC = b'\x1b['
 RESET = ESC + b'0m'
 HOME = ESC + b'1;1H'
-
+BLOCK = '█'.encode('utf8')
 
 class TTYRenderer(ArrayRenderer):
     """ renders to a tty """
@@ -26,12 +26,12 @@ class TTYRenderer(ArrayRenderer):
         self.target_array = np.zeros((self.rows, self.cols, 3))
         super().__init__(target_array=self.target_array, pixel_aspect=1.5, **kwargs)
 
-    @lru_cache(maxsize=None)
+
+    @cache
     def pixel(self, r=0, g=255, b=0):
-        block = '█'.encode('utf8')
         if r == 0 and g == 0 and b == 0:
-            return b' '  #block
-        return ESC + b'38;2;' + f'{r};{g};{b}'.encode('utf8') + b'm' + block
+            return b' '
+        return ESC + b'38;2;' + f'{r};{g};{b}'.encode('utf8') + b'm' + BLOCK
 
 
     def postrender(self):
