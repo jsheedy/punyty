@@ -77,7 +77,7 @@ class Renderer():
             self.draw_line((x2, y2, x3, y3), color)
             self.draw_line((x3, y3, x1, y1), color)
 
-    def light_components(self, scene, polys, normals, centers):
+    def light_components(self, scene, normals, centers):
 
         for light in scene.lights:
 
@@ -94,8 +94,7 @@ class Renderer():
                 intensities = np.clip(point_light_dot_products, 0, 1)
 
             elif isinstance(light, AmbientLight):
-                repeats = len(polys)
-                intensities = np.repeat(light.intensity, repeats)
+                intensities = np.repeat(light.intensity, normals.shape[1])
 
             yield intensities
 
@@ -113,11 +112,11 @@ class Renderer():
 
         poly_mask = distance_mask & cone_of_vision_mask & front_facing_mask
         eligible_polys = np.where(poly_mask)[0]
+
         depth_coords = [(distance[i], i) for i in eligible_polys]
         depth_coords.sort(reverse=True)
 
-        lighting = np.vstack(tuple(self.light_components(scene, polys, normals, centers))).sum(axis=0)
-
+        lighting = np.vstack(tuple(self.light_components(scene, normals, centers))).sum(axis=0)
         for z, i in depth_coords:
             l = lighting[i]
             p1, p2, p3 = polys[i]
