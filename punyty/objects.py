@@ -7,10 +7,10 @@ from .object3d import Object3D
 class Tetrahedron(Object3D):
 
     vertices = np.array([
-        [1, 1, 1],
-        [-1, -1, 1],
-        [1, -1, -1],
-        [-1, 1, -1],
+        [ 1,  1,  1],
+        [-1, -1,  1],
+        [ 1, -1, -1],
+        [-1,  1, -1],
     ], dtype=np.float64)
 
     edges = (
@@ -33,15 +33,15 @@ class Tetrahedron(Object3D):
 class Cube(Object3D):
 
     vertices = np.array([
-        [1, 1, -1],
-        [-1, 1, -1],
+        [ 1,  1, -1],
+        [-1,  1, -1],
         [-1, -1, -1],
-        [1, -1, -1],
+        [ 1, -1, -1],
 
-        [1, 1, 1],
-        [-1, 1, 1],
+        [ 1,  1, 1],
+        [-1,  1, 1],
         [-1, -1, 1],
-        [1, -1, 1]
+        [ 1, -1, 1]
     ], dtype=np.float64)
 
     edges = (
@@ -80,12 +80,12 @@ class Cube(Object3D):
 class Octahedron(Object3D):
 
     vertices = np.array([
-        [1, 0, 0],
-        [-1, 0, 0],
-        [0, 1, 0],
-        [0, -1, 0],
-        [0, 0, 1],
-        [0, 0, -1],
+        [ 1,  0,  0],
+        [-1,  0,  0],
+        [ 0,  1,  0],
+        [ 0, -1,  0],
+        [ 0,  0,  1],
+        [ 0,  0, -1],
     ], dtype=np.float64)
 
     edges = (
@@ -128,30 +128,30 @@ class Dodecahedron(Object3D):
 
         vertices = np.array([
             # cube
-            [1, 1, 1],
-            [1, -1, 1],
+            [ 1,  1, 1],
+            [ 1, -1, 1],
             [-1, -1, 1],
-            [-1, 1, 1],
+            [-1,  1, 1],
 
-            [1, 1, -1],
-            [1, -1, -1],
+            [ 1,  1, -1],
+            [ 1, -1, -1],
             [-1, -1, -1],
-            [-1, 1, -1],
+            [-1,  1, -1],
 
-            [phi, 1/phi, 0],
-            [phi, -1/phi, 0],
+            [ phi,  1/phi, 0],
+            [ phi, -1/phi, 0],
             [-phi, -1/phi, 0],
-            [-phi, 1/phi, 0],
+            [-phi,  1/phi, 0],
 
-            [0, phi, 1/phi],
-            [0, phi, -1/phi],
+            [0,  phi,  1/phi],
+            [0,  phi, -1/phi],
             [0, -phi, -1/phi],
-            [0, -phi, 1/phi],
+            [0, -phi,  1/phi],
 
-            [1/phi, 0, phi],
-            [1/phi, 0, -phi],
+            [ 1/phi, 0,  phi],
+            [ 1/phi, 0, -phi],
             [-1/phi, 0, -phi],
-            [-1/phi, 0, phi]
+            [-1/phi, 0,  phi]
 
         ], dtype=np.float64)
 

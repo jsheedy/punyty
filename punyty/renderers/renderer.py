@@ -1,6 +1,6 @@
 import numpy as np
 
-from punyty.scene import DirectionalLight, PointLight, AmbientLight
+from punyty.lights import DirectionalLight, PointLight, AmbientLight
 
 
 class Renderer():
@@ -69,7 +69,6 @@ class Renderer():
     def draw_wireframe(self, points, polys, colors):
 
         for i, (p1, p2, p3) in enumerate(polys):
-            # p1, p2, p3 = polys[i]
             color = colors[i]
             x1, y1 = points[0, p1], points[1, p1]
             x2, y2 = points[0, p2], points[1, p2]

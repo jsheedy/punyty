@@ -1,25 +1,10 @@
 from .camera import Camera
+from .lights import DirectionalLight, AmbientLight
 from .vector import Vector3
 
 
-class DirectionalLight():
-    def __init__(self, direction):
-        self.direction = direction.normalize().A
-
-
-class PointLight():
-    def __init__(self, position, intensity=1.0):
-        self.position = position
-        self.intensity = intensity
-
-
-class AmbientLight():
-    def __init__(self, intensity=0.1):
-        self.intensity = intensity
-
-
 class Scene:
-    def __init__(self, f=3, cx=0.5, cy=0.5):
+    def __init__(self, f=3, cx=0.5, cy=0.5, lights=None):
         self.objects = dict()
         self.main_camera = Camera(f=f, cx=cx, cy=cy, position=Vector3(0,0,-10))
         self.main_camera.look_at(Vector3(0, 0, 0))
