@@ -77,6 +77,28 @@ class Renderer():
             self.draw_line((x2, y2, x3, y3), color)
             self.draw_line((x3, y3, x1, y1), color)
 
+    def light_components(self, scene, polys, normals, centers):
+
+        for light in scene.lights:
+
+            if isinstance(light, DirectionalLight):
+                light_dot_products = np.dot(light.direction, normals[:3, :])
+                intensities = np.clip(light_dot_products, 0, 1)
+
+            elif isinstance(light, PointLight):
+                point_light_vector = centers[:3, :] - np.expand_dims(light.position.A, 1)
+                d = np.linalg.norm(point_light_vector, axis=0)
+                point_light_normals = point_light_vector / d
+                # https://stackoverflow.com/questions/14758283/is-there-a-numpy-scipy-dot-product-calculating-only-the-diagonal-entries-of-the
+                point_light_dot_products = (point_light_normals * normals[:3, :]).sum(axis=0)
+                intensities = np.clip(point_light_dot_products, 0, 1)
+
+            elif isinstance(light, AmbientLight):
+                repeats = len(polys)
+                intensities = np.repeat(light.intensity, repeats)
+
+            yield intensities
+
     def draw_polys(self, scene, normals, centers, points, polys, colors):
         forward = scene.main_camera.forward[:3]
 
@@ -85,40 +107,16 @@ class Renderer():
         camera_normals = camera_vector / distance
         camera_dot_products = np.dot(forward, camera_normals)
 
-        cone_of_vision_mask = camera_dot_products > 0.95  # 0.95 is sweet spot for sdl renderer #self.joystick.x
+        cone_of_vision_mask = camera_dot_products > 0.95  # 0.95 is sweet spot for sdl renderer
         distance_mask = (distance < self.max_depth) & (distance > self.min_depth)
         front_facing_mask = np.dot(-1*forward, normals[:3, :]) > 0
-        # poly_mask = cone_of_vision_mask
-        # poly_mask = distance_mask
-        # poly_mask = front_facing_mask
+
         poly_mask = distance_mask & cone_of_vision_mask & front_facing_mask
         eligible_polys = np.where(poly_mask)[0]
         depth_coords = [(distance[i], i) for i in eligible_polys]
         depth_coords.sort(reverse=True)
 
-        def light_components():
-
-            for light in scene.lights:
-
-                if isinstance(light, DirectionalLight):
-                    light_dot_products = np.dot(light.direction, normals[:3, :])
-                    intensities = np.clip(light_dot_products, 0, 1)
-
-                elif isinstance(light, PointLight):
-                    point_light_vector = centers[:3, :] - np.expand_dims(light.position.A, 1)
-                    d = np.linalg.norm(point_light_vector, axis=0)
-                    point_light_normals = point_light_vector / d
-                    # https://stackoverflow.com/questions/14758283/is-there-a-numpy-scipy-dot-product-calculating-only-the-diagonal-entries-of-the
-                    point_light_dot_products = (point_light_normals * normals[:3, :]).sum(axis=0)
-                    intensities = np.clip(point_light_dot_products, 0, 1)
-
-                elif isinstance(light, AmbientLight):
-                    repeats = len(polys)
-                    intensities = np.repeat(light.intensity, repeats)
-
-                yield intensities
-
-        lighting = np.vstack(tuple(light_components())).sum(axis=0)
+        lighting = np.vstack(tuple(self.light_components(scene, polys, normals, centers))).sum(axis=0)
 
         for z, i in depth_coords:
             l = lighting[i]
