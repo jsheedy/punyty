@@ -106,24 +106,37 @@ class Renderer():
         camera_normals = camera_vector / distance
         camera_dot_products = np.dot(forward, camera_normals)
 
-        cone_of_vision_mask = camera_dot_products > 0.95  # 0.95 is sweet spot for sdl renderer
+        # First determine which polys are visible
+        cone_of_vision_mask = camera_dot_products > 0.95
         distance_mask = (distance < self.max_depth) & (distance > self.min_depth)
         front_facing_mask = np.dot(-1*forward, normals[:3, :]) > 0
 
         poly_mask = distance_mask & cone_of_vision_mask & front_facing_mask
         eligible_polys = np.where(poly_mask)[0]
 
-        depth_coords = [(distance[i], i) for i in eligible_polys]
+        if len(eligible_polys) == 0:
+            return
+
+        # Only calculate lighting for visible polygons
+        filtered_normals = normals[:, eligible_polys]
+        filtered_centers = centers[:, eligible_polys]
+
+        lighting = np.vstack(tuple(
+            self.light_components(scene, filtered_normals, filtered_centers)
+        )).sum(axis=0)
+
+        # Sort by distance for proper depth ordering
+        depth_coords = [(distance[i], i, idx) for idx, i in enumerate(eligible_polys)]
         depth_coords.sort(reverse=True)
 
-        lighting = np.vstack(tuple(self.light_components(scene, normals, centers))).sum(axis=0)
-        for z, i in depth_coords:
-            l = lighting[i]
-            p1, p2, p3 = polys[i]
+        # Render visible polygons
+        for z, poly_idx, lighting_idx in depth_coords:
+            l = lighting[lighting_idx]
+            p1, p2, p3 = polys[poly_idx]
             x1, y1 = points[0, p1], points[1, p1]
             x2, y2 = points[0, p2], points[1, p2]
             x3, y3 = points[0, p3], points[1, p3]
-            lit_color = tuple(map(lambda x: np.clip(l * x, 0, 1), colors[i]))
+            lit_color = tuple(map(lambda x: np.clip(l * x, 0, 1), colors[poly_idx]))
             self.draw_poly(x1, y1, x2, y2, x3, y3, lit_color)
 
     def render(self, scene):
