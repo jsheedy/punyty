@@ -133,10 +133,10 @@ class Renderer():
         for z, poly_idx, lighting_idx in depth_coords:
             l = lighting[lighting_idx]
             p1, p2, p3 = polys[poly_idx]
-            x1, y1 = points[0, p1], points[1, p1]
-            x2, y2 = points[0, p2], points[1, p2]
-            x3, y3 = points[0, p3], points[1, p3]
-            lit_color = tuple(map(lambda x: np.clip(l * x, 0, 1), colors[poly_idx]))
+            x1, y1 = points[:, p1]
+            x2, y2 = points[:, p2]
+            x3, y3 = points[:, p3]
+            lit_color = np.clip(l * colors[poly_idx], 0, 1)
             self.draw_poly(x1, y1, x2, y2, x3, y3, lit_color)
 
     def render(self, scene):
@@ -162,7 +162,7 @@ class Renderer():
                 edges.append(obj_edges)
 
             obj_polys = [((poly[0]+n_points), (poly[1] + n_points), (poly[2] + n_points)) for poly in obj.polys]
-            colors.extend([obj.color.as_tuple() for _ in obj.polys])
+            colors.extend([obj.color.A for _ in obj.polys])
             polys.extend(obj_polys)
 
             n_points += obj.vertices.shape[1]
