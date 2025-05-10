@@ -1,5 +1,3 @@
-import math
-
 import numpy as np
 
 class ZeroVectorError(Exception): pass
@@ -55,7 +53,7 @@ class Vector3:
 
     def length(self):
         """ returns the magnitude of this vector """
-        return math.sqrt(self.x**2 + self.y**2 + self.z**2)
+        return np.sqrt(self.x**2 + self.y**2 + self.z**2)
 
     def dot(self, other):
         return self.x * other.x + self.y * other.y + self.z * other.z
@@ -73,7 +71,7 @@ class Vector3:
     def angle_between(self, other):
         """ returns the angle between this vector and other """
         dot = self.normalize().dot(other.normalize())
-        angle = math.acos(dot)  # / (self.length() * other.length()))
+        angle = np.acos(dot)
         return angle
 
     def normalize(self):
