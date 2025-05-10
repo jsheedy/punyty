@@ -161,15 +161,15 @@ class Renderer():
                 obj_edges = [((edge[0]+n_points), (edge[1] + n_points)) for edge in obj.edges]
                 edges.append(obj_edges)
 
-            obj_polys = [((poly[0]+n_points), (poly[1] + n_points), (poly[2] + n_points)) for poly in obj.polys]
+            obj_polys = obj.polys + n_points
             colors.extend([obj.color.A for _ in obj.polys])
-            polys.extend(obj_polys)
-
+            polys.append(obj_polys)
             n_points += obj.vertices.shape[1]
 
         vertices_matrix = np.hstack(vertices)
         normals_matrix = np.hstack(normals)
         centers_matrix = np.hstack(centers)
+        polys = np.hstack(polys)
 
         points = self.vertices_to_screen(scene, vertices_matrix)
 

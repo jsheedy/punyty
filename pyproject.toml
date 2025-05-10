@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.2.5",
+    "pysdl2>=0.9.17",
     "scikit-image>=0.25.2",
 ]
 

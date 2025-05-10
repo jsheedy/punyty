@@ -109,6 +109,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "numpy" },
+    { name = "pysdl2" },
     { name = "scikit-image" },
 ]
 
@@ -120,11 +121,21 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "numpy", specifier = ">=2.2.5" },
+    { name = "pysdl2", specifier = ">=0.9.17" },
     { name = "scikit-image", specifier = ">=0.25.2" },
 ]
 
 [package.metadata.requires-dev]
 dev = [{ name = "punyty", virtual = "." }]
+
+[[package]]
+name = "pysdl2"
+version = "0.9.17"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d7/ff/8704d84ad4d25f0a7bf7912504f64575e432e8d57dfba2fe35f5b2db7e04/pysdl2-0.9.17.tar.gz", hash = "sha256:48c6ef01a4eb123db5f7e46e1a1b565675755b07e615f3fe20a623c94735b52b", size = 775955, upload_time = "2024-12-30T18:07:27.562Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5d/e2/399ea7900e7510096aeb41439e6f1540bef0bdf7e15cc2d8464e4adb71e8/PySDL2-0.9.17-py3-none-any.whl", hash = "sha256:fe923dbf5c7b27bbc1eb2bf58abfa793f8f13fd7ae8b27b1bc2de49920bcbd41", size = 583137, upload_time = "2024-12-30T18:07:25.987Z" },
+]
 
 [[package]]
 name = "scikit-image"
