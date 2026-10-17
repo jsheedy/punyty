@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class Object3D:
     vertices = np.zeros(shape=(0,3))
     edges = ()
-    polys = ()
+    polys = np.zeros(shape=(0,3), dtype=np.uint32)
     normals = ()
     centers = ()
 
@@ -26,9 +26,9 @@ class Object3D:
         self._scale_matrix = scale_matrix(scale or Vector3.unity())
         self._rotation_matrix = rotation_matrix(rotation)
         self.color = color
-        if (not self.normals) and self.polys:
+        if (not self.normals) and self.polys.size:
             self.normals = self.calculate_normals()
-        if (not self.centers) and self.polys:
+        if (not self.centers) and self.polys.size:
             self.centers = self.calculate_centers()
 
         self.vertices = self.to_homogenous_coords(self.vertices)

@@ -1,0 +1,19 @@
+[project]
+name = "punyty"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.2.5",
+    "pysdl2>=0.9.17",
+    "scikit-image>=0.25.2",
+]
+
+[dependency-groups]
+dev = [
+    "punyty",
+]
+
+[tool.uv.sources]
+punyty = { workspace = true }
